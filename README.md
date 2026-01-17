@@ -15,6 +15,18 @@ This Repository contains my "AI Builder with n8n: Create Agents &amp; Voice Agen
 
 **F) Day 1 - How to Build an AI Agent with n8n and OpenAI API Integration**
 
+**G) Day 2 - Understanding Agentic AI: How AI Agents Work with LLMs and Prompts**
+
+**H) Day 2 - How LLMs Create Illusion of Memory and Reasoning Capabilities in AI**
+
+**I) Day 2 - How Tool Calling Works in Agentic AI Systems and LLM Workflows**
+
+**J) Day 2 - How to Evaluate AI Agents: Stop Anthropomorphizing LLMs in Workflows**
+
+**K) Day 2 - How to Navigate n8n Cloud: Admin Panel, Instance, and Canvas Tutorial**
+
+**L) Day 2 - How to Build AI Workflows with n8n: Nodes, Triggers, and Automation**
+
 
 
 
@@ -291,3 +303,316 @@ You also get something extra with this course: you get me. I’m available to he
 As you build projects with N810, post about them on LinkedIn. Share screenshots, tag me, and I’ll weigh in to help amplify your work. If you see others from the course posting and we’re connected, please like and comment to support the community. That’s part of the program.
 
 And with that, we’ve completed the first day. One day down, fourteen to go. You’re already 7% of the way through this program. Many congratulations. I can’t wait to see you tomorrow, when we’ll go deeper into the theory of N810 and agents. I’ll see you then.
+
+# **G) Day 2 - Understanding Agentic AI: How AI Agents Work with LLMs and Prompts**
+
+Well, this is good news. You’ve decided to come back for more. You weren’t completely put off by what we did yesterday, and now you’re back again. Welcome. Welcome to week one, day two.
+
+I want to be upfront with you about how I like to teach. I’m very much a learning-by-doing type of person. The way I like to teach is the same way I like to learn myself—by jumping into a product and actually using it. Today, however, is a bit of an exception. This session is going to involve more talking than usual. I’ll be giving you some foundational concepts and background that will support everything that’s coming later. We’ll be talking about Agentic AI and some of the constructs around n8n, although there will still be a bit of hands-on work, so don’t worry. Let’s get started.
+
+Let me tell you more about Agentic AI. We’ll begin by diving into the topic of AI agents, before circling back to n8n again. This will be a quick recap of some of the things we already discussed yesterday. There are many different ways to define an AI agent, so many that it’s almost become a joke. One of the earlier definitions, used by companies like OpenAI, described agents as systems that can work independently for you, such as the Operator agent or the ChatGPT agent.
+
+Later, another definition emerged. This one focused on AI systems where a large language model decides what to do next. In this setup, the LLM generates content that effectively describes a plan, such as “do A, then B, then C,” or perhaps “do A, then C, then B.” That generated text becomes the output of the LLM, and we interpret it as instructions for what should happen next. This idea—where an LLM decides the order of activities and orchestrates a workflow—became a common working definition of an AI agent.
+
+More recently, the definition has evolved again. Now, an agent is often described as an LLM that runs tools in a loop in order to achieve a specific goal. That looping behavior is a key part of what we now think of as Agentic AI.
+
+A lot of Agentic AI feels magical, but behind that magic, the reality is actually quite pedestrian. Most of what feels impressive in AI comes down to writing good prompts for large language models. A prompt is simply the input text that we send to an LLM. The LLM itself is a data science artifact—a statistical model—that takes an input and generates an output by predicting what is most likely to come next.
+
+Every time you call an LLM, that call is stateless. It takes the input, generates an output, and then forgets about it. It doesn’t know how it was called before, and it’s being called by countless people around the world all the time. Models like GPT receive an input sequence and produce an output sequence based entirely on that input. What we control are two things: what input we send and how we interpret the output. Most of Agentic AI is about mastering these two activities—getting the input right and making sense of the output.
+
+Typically, the input sent to an LLM is made up of several parts. It often starts with something called the system prompt. This is the text that sets the overall context. It defines the role the LLM is playing, provides background information, and specifies the tone or style of the response. After that usually comes the user prompt, which is the specific message the LLM is meant to respond to.
+
+In many cases, the full conversation history is also included in the input. This might include an initial user message like “Hi there,” the model’s response, the next user message, another response, and finally the current prompt the model is responding to. All of this can be included in a single input sequence. This works well because LLMs were trained on data organized in exactly this way—system prompts followed by user and assistant messages—so they’re very good at generating coherent outputs that follow this structure.
+
+The key point is that we get to decide how this input data is organized. We can apply all sorts of techniques to make it more likely that the LLM’s output aligns with our business objectives. By structuring the input carefully, we can guide the model toward producing the kind of output we want. And once we have that output, we can choose how to interpret it.
+
+For example, the input might ask the model to respond with the order in which certain steps should be executed. The output might then list those steps in sequence, and we can interpret that output as instructions to control a workflow. In this way, the text generated by the LLM is effectively driving a process. This combination of carefully designed input and intentional interpretation of output is the real secret sauce behind Agentic AI.
+
+In the past, this was often referred to as prompt engineering, which has become a bit of an outdated term. Today, people increasingly talk about context engineering instead. This focuses on how to best set up the context sent to the LLM so that it’s positioned to achieve a specific business goal.
+
+Most of what feels like magic in Agentic AI can be explained by five core tricks. These are essentially five conjuring techniques centered around prompting and, to a lesser extent, how LLMs are trained. Alongside these five tricks, there’s also a common pitfall—a trap that people often fall into when building Agentic AI systems.
+
+The five tricks we’ll cover include the illusion of memory, which many of you may already be familiar with; thinking and reasoning, including the idea of reasoning budgets; chaining LLMs together; the use of tools—what that really means and what it doesn’t; and finally, the famous agent loop. In addition to these, we’ll discuss the trap I call the human trap. You might not yet know what that means, but we’ll get to it.
+
+# **H) Day 2 - How LLMs Create Illusion of Memory and Reasoning Capabilities in AI**
+
+Okay, let’s talk about five tricks and one trap. We’ll start with trick number one: the illusion of memory.
+
+This is something you’ve basically already seen before, but it’s always worth taking a minute to explain it clearly. When we make a prompt to a language model—say something like, “My name is Ed”—the model’s job is simply to complete that prompt with the most likely text that comes next. As you know, it’s really generating tokens, which are small fragments of text. In this case, it responds with something like, “Hi, Ed.”
+
+Now suppose we give it a completely separate prompt: “What’s my name?” Every time you call a language model—and I’ve explained this many times—it is stateless. This is GPT the model, the language model itself, not ChatGPT the product. When you make a call to GPT, it takes an input sequence—“What’s my name?”—and predicts the most likely text that should come after it based on its training data. And of course, in that case, it will say something like “I don’t know your name”, or something a bit more charming in typical GPT style.
+
+So the illusion of memory comes from a very simple trick. When you prompt an LLM and say, “My name is Ed”, and it responds, “Hi, Ed”, then later the user asks, “What’s my name?”, you do not send the LLM just the prompt “What’s my name?” Instead—and you probably already know this—you send it the entire conversation so far.
+
+That means what the model actually sees is something like:
+
+“My name is Ed.
+Hi, Ed.
+What’s my name?”
+
+What the model is doing now is predicting what comes next. In its training data, it has seen countless examples that follow this pattern of message, response, message, response. So it expects something like that. When it generates the next tokens—the next bit of text at the end—it produces something consistent with the full conversation. That’s why it responds, “Your name is Ed.”
+
+This is also why every time you talk to ChatGPT through the UI, it sends the underlying GPT model the entire conversation history each time you press Enter. The model then generates the next tokens based on that full history. This trick of sending the entire conversation creates the illusion that the model remembers what you said 30 seconds ago. It doesn’t. The information is simply included again in the prompt every single time. Many of you already knew this, but it never hurts to go through it again. That’s how trick number one works.
+
+Now let’s move on to trick number two, which is arguably less about agentic AI specifically and more about reasoning and general thinking. This idea started about a year and a half ago when people discovered something that was called chain of thought. The idea was that you could ask an LLM a question and then simply add something like, “Please think step by step,” and you would often get better results just by doing that.
+
+There seemed to be something strange going on. If an LLM generates text that describes what it should do, and then generates text to actually do it, you often get better outcomes. Nothing is actually thinking in a human sense—it’s still just generating likely text—but as a side effect, by generating text that describes a thought process, the model ends up producing better answers.
+
+This led to the idea of thinking models or reasoning models—they mean the same thing. These are models that have been trained so that when they’re given a question, they first generate some text describing how they’ll reason through the problem step by step, and only then generate the final answer. That’s why, with some models, you see what’s called a thinking trace before the final output.
+
+To give you a concrete example—one I use in some of my technical courses—you can prompt a small model that is not in reasoning mode, such as GPT-4.1 nano, and ask something like: “You toss two coins. One is heads. What’s the chance the other one is tails?” Quite often, the model will give the wrong answer, typically something like 50%. That answer is incorrect because this is one of those sneaky questions with a bit of trickery built into it.
+
+If, however, you prompt it differently—“You toss two coins. One is heads. What’s the chance the other one is tails? First describe your thought process, then give the answer.”—or if you use a reasoning model that’s been trained to output its reasoning first, you’ll often see a thought process like: “Okay, this is probably a trick question. They didn’t say the left coin is heads and the right coin is tails. I need to consider all possible outcomes.” It will then reason through the possibilities and arrive at the correct answer, which is two thirds.
+
+You can try these experiments yourself. Depending on the model you choose and how you prompt it, you can reliably reproduce this behavior: a small model without reasoning often gets the wrong answer, while the same model—or a similar one—with reasoning enabled produces the correct result. This reasoning trick is a powerful way to extract more sophisticated intelligence from a model that is, at its core, simply generating the most likely text to follow an input.
+
+One more important detail here is how these models actually generate text. They don’t produce an entire output all at once. Instead, they generate one token at a time. Given an input, the model predicts the most likely next token. That token is then appended to the input, and the entire sequence is fed back into the model to generate the next token. This repeats until the output is complete. This process is called inference.
+
+Because of this, if you ask a model to generate tokens that describe a thought process, it will do exactly that first. Then, when it generates the final answer, that answer will be consistent with the reasoning it already produced. This often leads to better outcomes. It sounds counterintuitive and almost too good to be true, but it works, and it’s been shown empirically to work.
+
+Some models are trained purely for chat. They respond immediately without explicit reasoning. Other variants of the same model family are trained for reasoning, where they generate reasoning text first and then an answer. There are also hybrid models that can do both. People often gravitate toward reasoning models because they perform better on benchmarks and appear more intelligent. However, chat models can be better for certain use cases—especially in agentic AI, where you’re already driving the system step by step.
+
+So don’t assume that a reasoning model is always better. Sometimes a chat model will perform better. The only real way to know is to try both. This entire field is highly experimental. There are no absolute right or wrong answers—only experimentation, measurement, and choosing what works best for your use case.
+
+Finally, some models allow you to control how long they should think. This is sometimes called reasoning effort or a thinking budget. In some models, such as the latest GPT-5.1, you can set this to none (chat mode), minimal, low, medium, or high. You might wonder how this actually works under the hood—how you tell a model that’s just generating tokens to “think more.”
+
+There are several techniques, but the most common one is surprisingly hacky. During inference, as the model generates tokens one at a time, you don’t have to feed back only the tokens it generated. You can insert additional tokens of your own. The model has no idea that it didn’t generate them—it just treats them as part of the input and continues generating text.
+
+Someone realized that if, during the reasoning phase, you wait until the model finishes a sentence—something that looks like a completed thought—and then insert the word “wait”, the model now has to generate text that follows that word. Because the next tokens must be coherent with “wait”, the model often steps back and reconsiders. It might say things like, “Wait, I should double-check my assumptions,” or “Wait, let me review the problem again.”
+
+This causes the model to revisit and challenge its own reasoning. Adding words like “wait”, “on the other hand”, or similar phrases encourages it to explore new reasoning paths. If you’ve ever looked closely at reasoning traces in LLM outputs, you may have seen the word “wait” appear—that’s often this trick at work.
+
+This incredibly simple technique works remarkably well and is one of the core methods used to control a model’s thinking budget and force deeper reasoning before it produces a final answer.
+
+# **I) Day 2 - How Tool Calling Works in Agentic AI Systems and LLM Workflows**
+
+And this may be more theory than you thought you were signing up for, but it’s going to be genuinely useful. This theory will give you valuable intuition when we actually get to building agent systems, rather than just talking about them abstractly.
+
+Now let’s move on to the third trick, which is a simple one: chaining LLMs.
+
+You probably already know this idea. You can write a complicated prompt to a language model, such as: “Come up with a puzzle and then solve it.” Sometimes this is a good thing to do because it gives the LLM a lot of flexibility. We often use the word autonomy here. It gives the model the freedom to go in different directions—to come up with two puzzles and solve them both if it wants to. You’re giving it a broad remit.
+
+However, sometimes you don’t want that flexibility. Sometimes you want exactly one puzzle and exactly one solution. You might want to be very careful to ensure that the puzzle is hard, that it meets certain constraints, and that it’s framed properly. In cases like that, it can be much better to divide the work into two separate LLM calls.
+
+In the first LLM call, you ask it only to come up with a puzzle. You might refine that prompt carefully, adding details and specifics so the model becomes very good at generating the kind of puzzle you want. Then, once it responds with the puzzle, you build a second prompt and make another LLM call. In that second prompt, you say something like: “I’d like you to solve a puzzle. Here is the puzzle.” And you simply include the puzzle generated by the first call.
+
+When we draw this graphically, we often show it as if one LLM is calling another LLM. But of course, that’s not really what’s happening. What’s actually happening is much simpler: you’re making one LLM call, taking the output, and inserting it into the next prompt. Conceptually, though, it helps to think of it as two workflow steps.
+
+This pattern—breaking a task into multiple LLM calls and passing outputs forward—is what we call chaining LLMs. It’s a very obvious idea, but it’s incredibly useful. It gives you more control, and it lets you test each step independently.
+
+Now let’s move on to the fourth trick, everyone’s favorite: tools.
+
+Tools feel incredibly magical, but in reality, they are extremely mundane. And again, this may be something you already know, but it’s worth emphasizing.
+
+Suppose a user asks a question like: “What’s the stock price of Google?” You have some software—maybe custom code, maybe a product like an agent platform—that receives this question. That software makes a call to a large language model that has been “equipped with tools.” In other words, it’s been told that it has the ability to look up stock prices using some external service, such as MarketStack.
+
+The LLM appears to connect to the internet, make an API request, retrieve Google’s stock price, and then respond with something like: “The price of Google stock is X.” This feels magical. But we know that LLMs don’t actually do that. They generate output tokens by pattern matching.
+
+So the question is: at what point did the LLM stop generating tokens and decide to connect to the internet instead? How did it suddenly gain this power?
+
+The answer, of course, is that it didn’t. Nothing like that happened.
+
+What actually happens is far more mundane. When your code builds the prompt that it sends to the LLM, it doesn’t just say “What’s the stock price of Google?” Instead, it says something more like this:
+
+“You can do one of two things.
+You can either answer the user directly, or you can respond by saying that I need to run a specific tool on your behalf. If you choose the tool, I will call you again with the results.”
+
+The tool available is something like “Look up stock prices.”
+The user’s question is “What’s the stock price of Google?”
+
+The LLM receives this carefully constructed input sequence. The output it generates says something like: “Use tool to look up the stock price of Google.” Your system then interprets that output, actually calls the tool, retrieves the stock price, and sends the LLM a second prompt that includes the tool result. The LLM then responds with the final answer.
+
+So once again, this is just a clever conjuring trick. By shaping the input, interpreting the output, running external code, and calling the LLM again, we create the illusion that the model itself is running tools. But as with so much in LLM systems, it all comes down to clever prompting.
+
+To really drive this home, there’s a simple experiment you can try in ChatGPT. You can give it a prompt like this:
+
+“You are a support agent for an airline. You answer user questions.
+Only use a tool to fetch ticket prices.
+The tool retrieves ticket prices for London or any city.
+
+Here’s the user’s question:
+‘I’d like to go to Paris. How much is a flight?’”
+
+If you do this, ChatGPT will respond with something like: “Use tool to fetch ticket price for Paris.” That’s it. It won’t invent a price. That response alone shows you exactly how tool calling works. It’s just pattern matching based on the prompt. You can try this yourself to see it firsthand.
+
+Now let’s move on to the fifth trick, which is the idea of an agent loop.
+
+An agent loop is the concept of calling an LLM repeatedly, allowing it to use tools over and over again until it has achieved a goal and is finished. This repeated cycle creates the behavior where the system appears to go off and do work autonomously.
+
+Here’s an example.
+
+Suppose you give an LLM the following task: “Your task is to find the current value of my portfolio.” You tell it that it has two tools available. Tool one retrieves the portfolio. Tool two looks up share prices.
+
+Given this prompt, what is the most likely next thing the LLM will output? The obvious answer is: “Use tool to retrieve portfolio.” That makes complete sense.
+
+So you take that output and feed it back into the next prompt. You include the same original instructions, add “Use tool to retrieve portfolio”, and then add the actual result of doing that. Suppose the result is: “Three shares of Google stock.”
+
+Now you send this entire prompt back to the LLM. The most likely completion now is: “Use tool to look up share price of Google.” Again, that makes perfect sense.
+
+You take that output, run the tool, retrieve the share price, and build a new prompt that includes everything so far: retrieving the portfolio, the result of three Google shares, looking up the share price, and the actual price—say, $100 per share.
+
+You send all of that in a single prompt. Remember, every LLM call is stateless, so the entire conversation so far must be included. Now when you call the model again, it responds: “The value of your portfolio is $300.”
+
+It doesn’t call any more tools. It’s done.
+
+And that—calling an LLM in a loop, interpreting its outputs, running tools, and feeding results back in until a goal is achieved—is agentic AI.
+
+# **J) Day 2 - How to Evaluate AI Agents: Stop Anthropomorphizing LLMs in Workflows**
+
+There you have it. Those are the five tricks that allow us to make calls to LLMs with structured inputs and to interpret their outputs in a way that gives the impression that something autonomous is carrying out tasks for us.
+
+Don’t worry if you didn’t fully grasp everything yet. We’re going to revisit these ideas again and again, and over time they will connect naturally. For now, the goal is simply to build some intuition around how these systems work.
+
+So, what about the trap? I mentioned that there were five tricks and one trap, and this trap is something I personally find quite frustrating because it happens so often. I want to warn you about it and get you thinking about it early. I call it the human trap. The more formal term for this is anthropomorphizing.
+
+Anthropomorphizing is the tendency to treat generative AI and LLMs as if they were humans, assigning them roles and responsibilities in the same way we would assign jobs to people. This happens constantly, especially when business leaders want to automate a process, something we’ll be doing a lot throughout this course.
+
+The typical instinct—shared by business users and even experienced engineers—is to create an “agent architecture.” This usually takes the form of a diagram with different agents connected by lines, where each agent is given a role based on how humans would organize the work. You might have agents that represent different jobs, such as researchers, evaluators, or decision-makers.
+
+I’m guilty of this myself. In some of my courses on generative engineering, we build systems like a trading floor with traders and researchers. It’s a very natural way to think, and for toy projects or demos, it’s perfectly fine. It’s fun and visually intuitive. However, it’s not a disciplined or reliable way to design real systems, and it comes with serious problems.
+
+The biggest problem is forgetting what LLMs are actually good at. LLMs are trained to generate realistic and compelling content. That’s their strength. If you tell an LLM, “You are an evaluation agent. Evaluate the previous output and give it a score out of ten, along with a justification,” it will do exactly that.
+
+It will generate a score. It will generate a justification. It will sound confident and reasonable. But that doesn’t mean the evaluation is correct. It doesn’t mean it’s aligned with your true objectives. It simply means the model is following the instructions in the prompt and producing plausible text.
+
+The real danger is that you can fool yourself into thinking you have a sophisticated system: a whole group of agents collaborating, each fulfilling its role and producing polished outputs. In reality, it may all be LLM-generated slop—content that looks meaningful but isn’t actually solving your problem in an accurate or reliable way.
+
+So what’s the right approach? When you divide a problem into multiple agents, you should do it because it genuinely improves performance, not because the roles sound sensible or mirror how humans would work. If you have a complex problem, it may make sense to split it into steps, but you should test that assumption.
+
+You try a simpler approach first. Then you introduce a division of labor. If the results improve, you keep it. If they don’t, you discard it. This is how you should approach agent design—scientifically, through experimentation.
+
+The most important word here is evaluation. You must have a way to measure outcomes. You should reorganize agents or break tasks into smaller steps only when it leads to better evaluations and demonstrably superior performance. That’s the correct justification, not the appearance of having well-defined responsibilities.
+
+Starting with human analogies can be a reasonable first step. After all, human organizations evolved for a reason. But that should only ever be a starting point. Always begin as simply as possible. Start with a single role, then gradually add complexity, experimenting as you go and measuring whether it actually helps.
+
+That’s the right way to work. That’s how you avoid the human trap.
+
+And with that, we wrap up the theory behind Agentic AI. I hope this has given you solid intuition as we move into building agentic workflows, along with some real-world lessons learned from deploying these systems in practice.
+
+Now it’s time to return to N810, starting with navigation and the big-picture building blocks of the platform.
+
+# **K) Day 2 - How to Navigate n8n Cloud: Admin Panel, Instance, and Canvas Tutorial**
+
+As I explained last time, there are two different modes you can use with n8n. The first is n8n Cloud, where the company manages the installation and you connect to it remotely. The second is self-hosted, where you run the code yourself—either on your own computer, a server, or another environment. We’ll get to self-hosting later.
+
+For now, we’re using Cloud, simply because it’s the fastest way to get up and running. I also mentioned a white-label mode earlier, but that’s a bit different and not what we’re focusing on here. So for now, cloud is what we’re using.
+
+There’s one big-picture concept I need to explain next: the basic terminology and structure for navigating n8n. This can be confusing at first, so I want to make it absolutely crystal clear right from the start.
+
+When you first sign in to n8n, you are signing in at the account level. The first screen you see contains cloud-level information about your account. This includes something called an instance.
+
+An instance is essentially an n8n engine. It’s the running software designed to automate business processes. That running installation is what we call an instance, and it has its own set of screens. Within an instance, you can run multiple workflows, where each workflow represents a business process you’re automating.
+
+So there are three levels of granularity to keep in mind:
+
+The cloud / account level
+
+The instance level (the running n8n engine)
+
+The workflow level (individual automations)
+
+When you first sign in, you land on a screen called the Dashboard, also sometimes referred to as the Admin Panel. These two names refer to the same thing. This screen shows cloud-level, account-level details, and the URL reflects that—it’s the app-level URL.
+
+From there, you can open your instance. When you enter the instance, you land on a screen that’s sometimes called Home and sometimes called Overview. “Home” is the most commonly used term. This is the home screen of your instance, and the URL now includes something like /cloud/workflows.
+
+On this screen, you’ll see a list of workflows. Each workflow can be clicked to open its own editor. That editor screen is referred to by several names: sometimes the editor, sometimes the canvas. Technically, the editor is the whole screen and the canvas is the main area inside it, but in practice people often use the terms interchangeably.
+
+The URL for this editor includes your instance URL followed by /workflow and an ID for that workflow. That’s how you know you’re inside a specific workflow.
+
+So again, those are the three levels:
+
+Cloud (account)
+
+Instance
+
+Workflow
+
+Now let’s actually look at n8n and see this in action.
+
+Here I am in my browser. I see the sign-in button, and since I’ve already logged in before, I land directly on this screen. You may have seen this screen already and felt briefly confused, because it looks different from what you see inside a running instance.
+
+This is the Dashboard, also known as the cloud Admin Panel. This is the cloud-level view. You’ll see tabs like Dashboard, Manage, Billing, and Export. These are all related to your account and subscription, not the running software itself.
+
+For example, here I can see my plan, the version I’m running, and how many days I have left in my free trial. All of this lives at the cloud level.
+
+On this same screen, you’ll also see a box representing an instance. This is a running installation of n8n in the cloud. To enter it, I click Open Instance.
+
+Now we’re inside the n8n instance itself. This is the Home or Overview screen of the running engine. Notice that the URL has changed and now includes the instance name followed by /cloud/workflows.
+
+This screen shows an overview of your workflows. This is the actual n8n software, not your cloud account. If you were self-hosting, this screen would look the same.
+
+Right now, everything here is empty because nothing has run yet. You might already have one workflow if you created something earlier. Otherwise, you may see a prompt to create your first workflow.
+
+On the left-hand side, you’ll see the main navigation. You can expand it to show labels. We’re currently on the Overview (or Home) page. You may also see sections like Personal, which represents a project containing a subset of workflows.
+
+You can create projects by clicking the plus button. For now, we’ll stay on the Overview screen.
+
+There’s also a button called Admin Panel inside the instance. Clicking this takes you back to the cloud dashboard. This is how you move between the running instance and the cloud account view.
+
+So to recap:
+
+From the cloud dashboard, you open an instance
+
+From inside the instance, you can return to the cloud dashboard via the Admin Panel
+
+Next, there’s a Templates section. Templates are pre-built workflows you can copy and use as a starting point. We’ll look at templates later, but for learning purposes, we’ll mostly build things from scratch so you understand how everything works.
+
+There are also AI-related features and a Settings screen. The settings control configuration options for the running instance itself.
+
+Now, from the Home screen of the instance, you can click Create Workflow. This takes you into the editor, where you work on a specific workflow that automates a business process.
+
+At the top, you’ll see the workflow name and ID in the URL. The large central area of the screen is the canvas, where you drag and drop nodes to build your automation.
+
+That brings us back to the three levels one last time:
+
+Cloud dashboard (account level)
+
+Instance home (running n8n engine)
+
+Workflow editor (canvas)
+
+To move around:
+
+Use Admin Panel to go back to cloud
+
+Use Overview or Personal to return to the instance home
+
+Click a workflow to enter the editor
+
+To build muscle memory, I recommend going into n8n now and switching between these three levels a few times. Once this navigation becomes second nature, everything else in the course will feel much easier to follow.
+
+# **L) Day 2 - How to Build AI Workflows with n8n: Nodes, Triggers, and Automation**
+
+Okay, now let’s do some quick clicking around within the product itself, and I’ll define things as we go. First, we press Create Workflow to start a new workflow. This brings up the editor, where we can create a workflow that represents automating a business process.
+
+The first thing we do here is add a step. This step is called a node. A node is one of the building blocks of a workflow—a little piece that makes up the entire automation. Nodes come in different flavors. They can be triggers, which start a workflow, or actions, which perform a task. For example, an “on chat message” node is a trigger because it initiates the workflow when a chat message is received.
+
+To add a node, you press the plus button, which opens the node panel. For example, we can go to AI → AI Agent, add that, and then use the connector to link it to the trigger. Nodes are linked by connectors, which simply connect the output of one node to the input of another. You can also delete or move connectors to organize the workflow visually.
+
+Next, we can add additional nodes. For instance, I can add an OpenAI node, which remembers the credentials we set up previously. We’re using GPT-4-mini in this example. Pressing escape closes the node selection, and we can organize the nodes on the canvas. We can also add memory, like Simple Memory, which allows the agent to store context across interactions.
+
+At this point, the workflow is functional. If I type something, like “Hi there,” the AI agent uses its memory and context to respond appropriately. The workflow now demonstrates memory in action. For example, if I say my name is Ed, the AI responds with, “Nice to meet you, Ed. How can I help you today?” This shows that the agent is using conversation history to maintain context.
+
+We can also modify the system prompt, which sets the tone for the AI. For example, I can change it from “helpful assistant” to “snarky, humorous assistant.” After refreshing, the AI responds in the new tone: “Well, well, well, look who decided to show up. What’s on your mind, oh mighty keyboard warrior?” This demonstrates how the system prompt controls the AI’s behavior.
+
+Additionally, we can add tools to the workflow. For example, the MarketStack tool can be integrated to fetch stock prices. Once connected, we can send a query, such as “What’s the stock price of Google?” The AI uses the tool to fetch the most recent trading data and responds accordingly. This shows how nodes, memory, system prompts, and tools can work together to create a fully functional AI workflow.
+
+The editor also allows us to switch between Editor and Executions. Executions show the inputs and outputs of workflow runs. This is useful for debugging and understanding how the workflow behaves over time. We can rename workflows, track executions at both the workflow and overview level, and manage multiple workflows from the home screen.
+
+To recap some terminology:
+
+Node: A single step or building block in a workflow, either a trigger or action.
+
+Connection: A link between two nodes, connecting outputs to inputs.
+
+Workflow: A collection of nodes and connections that automates a business process.
+
+Execution: A run of a workflow, either manually or in production mode.
+
+Active workflow: A workflow running in production mode.
+
+Template: A pre-built workflow used as a starting point.
+
+This concludes week one, day two. We’ve covered theory, terminology, and practical navigation of n8n, setting a solid foundation for building workflows. Tomorrow, we’ll move into our first yellow day, focusing on integrations. You’ll start building multiple workflows, seeing why n8n is such a powerful tool.
+
+Take a moment to celebrate—you’re already 13% of the way through this course. Tomorrow will be an exciting step forward.
