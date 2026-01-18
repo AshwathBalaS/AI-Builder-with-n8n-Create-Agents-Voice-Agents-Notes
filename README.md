@@ -27,6 +27,14 @@ This Repository contains my "AI Builder with n8n: Create Agents &amp; Voice Agen
 
 **L) Day 2 - How to Build AI Workflows with n8n: Nodes, Triggers, and Automation**
 
+**M) Day 3 - How to Integrate Google Sheets and Google Drive with n8n Workflows**
+
+**N) Day 3 - How to Build an AI Workflow in n8n with Google Drive Integration**
+
+**O) Day 3 - How to Automate Stock Portfolio Tracker with n8n and Google Sheets**
+
+**P) Day 3 - How to Build an AI Agent to Automatically Draft Gmail Replies in n8n**
+
 
 
 
@@ -616,3 +624,332 @@ Template: A pre-built workflow used as a starting point.
 This concludes week one, day two. We’ve covered theory, terminology, and practical navigation of n8n, setting a solid foundation for building workflows. Tomorrow, we’ll move into our first yellow day, focusing on integrations. You’ll start building multiple workflows, seeing why n8n is such a powerful tool.
 
 Take a moment to celebrate—you’re already 13% of the way through this course. Tomorrow will be an exciting step forward.
+
+# **M) Day 3 - How to Integrate Google Sheets and Google Drive with n8n Workflows**
+
+There are two ways in which Nw10 truly has a real wow factor.
+
+The first is the way AI—and especially genetic AI—is deeply woven throughout the product, making it incredibly easy to create AI agents. AI isn’t something bolted on as an afterthought; it’s embedded at the core, so building intelligent workflows feels natural and intuitive.
+
+The second wow factor is how Nw10 handles integrations.
+
+Historically, integrations have been one of the hardest parts of building systems—connecting different tools, making them talk the same language, and dealing with brittle APIs and edge cases. This is where most of the real pain usually happens.
+Except with Nw10, it doesn’t.
+
+Nw10 doesn’t just make integrations simple—it makes them feel almost magical.
+
+Today marks our first day focused entirely on integrations. It’s a yellow day.
+Welcome to Week One, Day Three: Integrations Day. Let’s do this.
+
+We’re now right in the middle of week one, and this first yellow day is all about integrations. The day is split into two parts. In the first half, we’ll focus on integrating with documents—things like spreadsheets and files. In the second half, we’ll dive into email and other technical integrations.
+
+For the technical folks watching, you know just how hard this kind of work usually is—and you’re going to be blown away.
+For the business folks, you may have always wondered why tech teams complain so much about integrations. After today, you might wonder that even more, because with Nw10, it’s genuinely a cinch.
+
+Before we jump in, let’s do a quick recap. Repetition is always useful.
+
+As a reminder, there are three levels of hierarchy when working with Nw10 in the cloud. At the top level, you have the cloud deployment, where you can log in and view your account-level details. Within that, you have a specific instance that’s running. That instance contains multiple workflows, each representing a business process.
+
+The cloud level is like the admin dashboard where you see everything. The instance has its own overview or home screen. Each individual workflow opens into the editor—primarily a canvas—which is where we’ll spend most of our time today.
+
+Let’s also revisit some terminology.
+
+A node represents a step in a business process. A trigger is a special type of node that kicks off a workflow—this could be scheduled (like running once per day) or event-based (such as receiving a message). An action node represents something happening, like sending an email or updating a document.
+
+A connection links nodes together, passing output from one node into the input of another. A workflow is simply a set of connected nodes that automate a business process. An execution is a single run of that workflow—either triggered manually during testing or automatically when the workflow is active in production.
+
+Finally, there are templates, which are pre-built workflows you can use as inspiration or starting points. We’ll mostly build from scratch, but templates are great for learning patterns and ideas.
+
+Now, one more recap—think of it like those movies where the same scene appears again and again, just slightly changed.
+
+Integrations will play a huge role over the next few weeks, so there are a few important things you need to understand upfront.
+
+First, you are always in control of integrations. You don’t need to do exactly what I do. Many integrations are free, some have free tiers, and others are paid—but you decide what you use. Always check what an integration does and whether you’re comfortable with it.
+
+I’ll demonstrate a specific set of integrations, but Nw10 offers a massive range. You can follow along exactly or take things in a different direction. If I integrate with Slack, you might choose Telegram. If I post messages, you might trigger something else entirely. That flexibility is one of Nw10’s greatest strengths.
+
+Second, integrations can be tiresome and slippery. Things will sometimes go wrong for reasons that seem absurd—like an API key getting messed up because hyphens were converted into long dashes when copied. Suddenly nothing works, and you’re left wondering what went wrong.
+
+This is where patience and thick skin come in. Read the documentation. Try again. Generate a new key. Nine times out of ten, there’s a simple explanation—you just have to keep pushing until you find it. And if you get truly stuck, I’m always available to help. I come with the package.
+
+Third, every integration we do is optional. Nothing is mandatory. If an API is paid, you can skip it. If you don’t like a tool, use another one. This is always in your court.
+
+With that said, the first set of integrations we’ll tackle is Google Drive—working with Google Docs and Google Sheets. If you already have a Google account, you’re in great shape.
+
+If you don’t—yes, I know, you’re part of a very small group on this planet—I’d strongly recommend setting one up. Google Drive, Docs, and Sheets are free, incredibly streamlined, and frictionless to integrate with. We’ll be using them heavily, so this is the one exception where I’d suggest getting set up if you aren’t already.
+
+# **N) Day 3 - How to Build an AI Workflow in n8n with Google Drive Integration**
+
+And here we are at Nanaimo.
+
+I’m going to click on the Sign In button, and up it comes. As you’ll remember, we’re now on the dashboard screen, which is the cloud-level view. From here, I’ll press Open Instance to enter the running instance.
+
+You can see that I’ve got 21 days left on my free trial, and this instance is running version two. I’ll press Open Instance, and that takes us into the instance home page.
+
+Here it is.
+
+If this is your very first time logging in, it may look slightly different, but otherwise it should look just like this. You’ll notice there’s a sample workflow already there—a snarky stock price lookup—but today we’re going to build some new workflows by working with Google Drive.
+
+So let’s get started.
+
+I’m going to click the Create Workflow button at the top. Right away, the editor opens up, with the canvas in the middle. By now, you should be familiar with this view.
+
+To add the first step, I’ll click the plus button. Since this is the beginning of a workflow, we’re choosing a trigger. From the list of trigger nodes, I’ll select the On Chat Message trigger—the one you already know.
+
+Once that’s added, you can either press Escape or click back onto the canvas and then press Escape to return to the main editor view. And here we are.
+
+Now I’ll press the plus button again. This time, I’ll go to AI and select an AI Agent. Press Escape again, and we’re back on the canvas.
+
+We’ll configure this agent with normal memory, just the simple memory setup. Escape again. You can see that simple memory is now enabled.
+
+Next, we’ll choose a chat model. You can use OpenRouter or OpenAI, but I’ll stick with OpenAI’s chat model. It automatically suggests using the OpenAI account, and we’ll keep the default 4.1 mini model. Press Escape, and that’s done.
+
+This is a solid starting point, so let’s quickly test it to make sure everything works.
+
+I’ll type “Hi there,” run the workflow, and off it goes. You can see it thinking, and then responding:
+“Hello. How can I assist you today?”
+
+Perfect. Everything is working, and we’re ready to move on.
+
+Before we start building integrations, I want to show you a few simple things about the editor to help you get more comfortable. We’ll add a little more each time.
+
+First, let’s rename the workflow. Right now it’s called something like “My Workflow 6.” We can click on the name and change it to First Integrations, then press Enter. That’s now the new name of the workflow.
+
+You may remember that workflows can also be tagged, similar to how blog posts are tagged. You can use this if you want to organize your workflows, though it’s optional.
+
+Now, while you’re on the canvas, there are several useful navigation shortcuts. You can zoom in and out using the on-screen buttons, but there’s an even faster way.
+
+If you’re on a PC, hold down the Control key. On a Mac, hold down the Command key—the one with the clover symbol. While holding it, click and drag on the canvas. You’ll be able to move around freely.
+
+Try this yourself. Do it a few times.
+
+As you do, notice the small mini-map in the bottom-left corner. It’s like the radar in a video game, showing the entire workspace and where your nodes are located. The white boxes represent the nodes in your workflow. This helps you orient yourself as workflows grow larger.
+
+Next, let’s talk about keyboard shortcuts, because we don’t want to be clicking endlessly—we want to be pro users.
+
+If you press the plus (+) key on your keyboard (no Shift needed), you zoom in. If you press the minus (–) key, you zoom out. If you press zero (0), the zoom resets to the default view.
+
+This works without holding Control or Command, which makes it fast and intuitive. Plus to zoom in, minus to zoom out, zero to reset.
+
+Another useful shortcut is the Tab key. Press Tab, and the node list opens on the right-hand sidebar. Press Escape, and it closes. Press Tab again—it opens. Escape closes it again.
+
+Try pressing Plus, Minus, Tab, and Escape a few times to build some muscle memory for navigating the editor.
+
+Now, let’s move on to Google Drive.
+
+If you’ve never used Google Drive before, don’t worry—it’s extremely easy to pick up. If you don’t yet have a Gmail account, just go to gmail.com, create one for free, and you’ll automatically get access to Google Drive.
+
+From there, you can click the app launcher in the top-right corner—the little grid icon—or just go directly to drive.google.com.
+
+Once you’re in Google Drive, it works like most file-storage systems. You can create folders, upload files, and create new documents. I’ve already created a folder by clicking New → New Folder, and I named it “stuff.”
+
+We’re now looking at the contents of that folder. If this interface is new to you, just click around—you’ll figure it out quickly.
+
+And remember, if you really don’t want to use Google Drive, that’s fine. You can just watch along and focus on understanding how integrations work conceptually.
+
+Now it’s time to create a document.
+
+When I say “Google Doc,” I mean it in the general sense. Sometimes people use “Google Docs” to refer to any file in Drive, and sometimes they mean the word-processor specifically. In this case, we’re going to create a Google Sheet.
+
+I’ll click New → Google Sheets, and here it is. Let’s name it Portfolio.
+
+This is going to be a very simple sheet. We’ll add three columns:
+
+Ticker
+
+Quantity
+
+Price
+
+Under Ticker, we’ll add a few examples. Let’s start with Google—always a favorite. We’ll say we own three shares. Next, Apple—we’ll say two shares. And of course, Tesla, because that’s always the example people use. Let’s say two shares there as well.
+
+So now we have a simple equity portfolio:
+
+A ticker
+
+A quantity
+
+And a price column, which we’ve intentionally left empty
+
+And that’s exactly where automation comes in.
+
+Now that our data is ready, it’s time to build some automations.
+
+# **O) Day 3 - How to Automate Stock Portfolio Tracker with n8n and Google Sheets**
+
+Now I’m going to press the plus button here under Tools, search for Sheets, and open the Google Sheets tool.
+
+Here it is.
+
+This is how we give our LLM the ability to access a Google Sheet. The first thing it asks for is the credential to connect with, and we’re going to choose Create New Credential.
+
+This is the moment where we connect our Nw10 cloud instance to Google Sheets. In many systems, this step can be really difficult and frustrating. For some integrations later on, this will be more challenging. But in the case of Google Sheets, it’s incredibly simple.
+
+There’s a Sign in with Google button right here. Ignore everything else and just press that.
+
+If you’re using the self-hosted version, this step is a bit more involved, but for now, we’ll just click Sign in with Google. A Google authentication screen pops up. I select my Google account, press Continue, and just like that, I see Connection successful.
+
+I close the window, and now there’s a green box that says Account connected.
+
+Honestly, it couldn’t be simpler.
+
+At this point, our cloud instance is connected to our Google account. We haven’t connected it to a specific sheet yet, but the access is there. So I press the X button to return to the tool configuration screen.
+
+Now we configure the tool itself.
+
+The tool description can stay automatic. For the resource, we select Sheet within a document. For the operation, we choose Get rows.
+
+Next, we choose the document from the dropdown. This list shows all the Google Sheets the account has access to. I select Portfolio, which is the sheet we just created. There’s only one sheet inside it, so I choose Sheet1.
+
+There are options to add filters, but we’ll leave everything as-is. This tool is now ready.
+
+So now we return to the main editor screen. We clear the chat, and we’re going to have a quick conversation with our sheet.
+
+I type “Hi there.”
+The agent responds as usual: “Hello, how can I assist you today?”
+
+Next, I say:
+“Please describe the sheet that you have access to read.”
+
+The agent starts working. It connects to Google Sheets, pulls the data, and responds:
+
+It tells me the sheet contains stock information with the columns Ticker, Quantity, and Price, and it lists the rows for Google, Apple, and Tesla along with their quantities.
+
+That’s it.
+
+We have successfully connected our Nw10 AI agent to a Google Sheet, and it took minutes—maybe even seconds if you were following along quickly.
+
+Now let’s make it do something useful.
+
+You can probably guess what’s coming next.
+
+I move things around slightly on the canvas and add another tool—MarketStack, which we worked with yesterday. At this point, the setup should feel familiar.
+
+We already have the credentials. The tool description stays automatic. The resource is End-of-day data, and the operation is Get many. The ticker is set by the model, and we turn on the Latest filter.
+
+That’s all we need to fetch the latest stock prices.
+
+Next, we add another Google Sheets tool. This time, the resource is still Sheets, but the operation is Update row.
+
+We select the same Portfolio document and Sheet1.
+
+Now comes the important part—telling the tool how to update the sheet.
+
+The tool automatically detects the columns: Ticker, Quantity, and Price. We need to tell it which column to use to decide which row to update. We choose Ticker as the column to match on.
+
+That means our AI can say, “Update the row where ticker equals Google” or “Apple” or “Tesla.”
+
+Next, we define what values the model is allowed to set. We remove Quantity, because we don’t want to change it. We keep Ticker (for matching) and Price (for updating).
+
+We explicitly tell the tool that the model defines the ticker and the model defines the price.
+
+This tool’s job is now very clear:
+Match on ticker → update the price.
+
+We tidy up the canvas a bit, and now we have three tools:
+
+Read rows from Google Sheets
+
+Get market data
+
+Update rows in Google Sheets
+
+Now I open my Portfolio Google Sheet in a separate window and place it on the side so we can watch it live.
+
+Back in Nw10, I clear the chat and say “Hi there.”
+The agent responds normally.
+
+Then I give the instruction:
+
+“Please update the prices in my equity portfolio sheet to reflect the latest market prices.”
+
+Now keep your eye on the spreadsheet.
+
+The agent starts working. Messages are spinning. Tools are firing.
+
+And then—bam.
+
+Tesla’s price appears.
+Apple’s price appears.
+Google’s price appears.
+
+All three prices are written directly into the Google Sheet.
+
+The workflow executed successfully.
+
+What we just witnessed was an AI agent reading a spreadsheet, fetching live market data, and writing updated values back into Google Sheets—all automatically.
+
+That’s pretty fabulous.
+
+What I love about this example is how tangible it feels. You can literally watch the numbers change in real time, which makes the power of integrations very real and very exciting.
+
+Now, I want you to dig a bit deeper into the tools themselves.
+
+Double-click on the Update Row tool. You’ll see the inputs and outputs from the last execution. Notice that it was called three times—once for each stock. You can switch between run 1, 2, and 3 and see exactly what data went in and what came out.
+
+On the left, you see the inputs in JSON format. If you’re familiar with JSON, great. If not, don’t worry—you’ll get comfortable with it quickly. You can also switch between JSON, table, and schema views depending on what feels most intuitive.
+
+You’ll see that the tool matched on Apple’s ticker and updated the price accordingly. The same happened for Google and Tesla.
+
+Now do the same with the MarketStack tool. You’ll see it was also called three times—once per ticker—and you can inspect the returned market data for each one.
+
+Finally, look at the Get Rows tool. This one was only called once, and it returned the entire sheet. You can view the result as JSON or as a table. What came back was the original data—tickers, quantities, and empty prices—before the AI updated them.
+
+This gives you a full picture of how the workflow executed.
+
+Now it’s your turn.
+
+Dig into the tools. Explore the inputs and outputs. Switch between JSON and table views. Add another column. Try pulling in highs and lows. Experiment with what else the AI can write into the sheet.
+
+Watch it update live.
+
+It’s a little spooky—and incredibly powerful.
+
+And this is what it feels like to work with an AI agent deeply integrated with Google Sheets.
+
+# **P) Day 3 - How to Build an AI Agent to Automatically Draft Gmail Replies in n8n**
+
+Next, we want to save our current workflow, because we’re going to build a new one. On a PC, you can press the red Save button, or use Control + S (on Mac, it’s Command + S). Once saved, it confirms with a “Saved” message.
+
+Now we can go back to Personal or click Overview to return to the main screen. It’s time to create a new workflow. Press the Create Workflow red button. The first step, as before, will be a Chat Message trigger, though in future workflows we might try different triggers.
+
+Next, we add another AI agent. At this point, you’re becoming a pro—you don’t really need me to guide you. We’ll use Simple Memory, and for the chat model, again, we’ll select OpenAI Chat Model. Let’s test it with a simple “Hi there,” and confirm everything is set up properly.
+
+It’s now time to add a new tool. Press the plus button, type Email, and select the Gmail tool to consume the Gmail API. We then choose Create New Credentials, which brings up the Sign in with Google button. Click it and connect it to your chosen Gmail account—this could be your personal or business email. You can grant it access to everything or limit permissions based on your comfort level. Remember, we’re always in control of what the AI can access.
+
+With the account connected, we return to the tool setup screen. We choose the resource Messages, because we want to read emails, not send them. The operation will be Get Many, but to avoid reading all emails, we apply a filter to only pull emails received after yesterday. Instead of hard-coding the date, we switch to Expression mode, which allows us to use a small JavaScript snippet (via Luxon library) to dynamically get “yesterday.” This keeps it flexible and dynamic, and it’s a good introduction to the low-code aspect of the platform.
+
+At this point, our AI agent has OpenAI chat, Simple Memory, and the new Gmail tool. Before running, it’s useful to know the Tidy Up button, which automatically reorganizes and resizes the canvas—very handy when adding multiple tools.
+
+Now let’s test the workflow. I send myself an email from a different account, saying: “I have exciting news. My agent in Nw10 can read my email. This is huge.” Then in the editor, I instruct the agent: “Please read the most recent email I received and summarize its content.”
+
+The agent connects to Gmail, fetches the latest message, and responds:
+“The most recent email you received is from Edward Donner with the subject ‘Important News.’ The content snippet indicates exciting news that the agent can now read emails, which is described as huge with many possibilities.”
+
+We’ve now confirmed that our agent successfully read a real email. It’s amazing how quickly this works with just a few clicks. You can also expand this to add more tools for reading and sending emails later.
+
+Next, we create another Gmail tool, this time to draft emails. I want to be careful here—rather than letting the agent send emails freely, we’ll constrain it. It can create a draft email, choose the subject and message content, but the recipient is locked to my Gmail address. This ensures full control while still allowing automation.
+
+I then instruct the agent: “Please draft an email saying I very much agree with this sentiment. This is huge news.” The workflow runs, and when I check my Gmail, there’s a draft email ready. It reads:
+
+“Hi Edward,
+I very much agree with your sentiment. This is huge news. The possibilities ahead are truly exciting.
+Best regards, Edward.”
+
+And just like that, the agent has read an email and drafted a response, fully respecting the constraints we set.
+
+Of course, we could extend this further—have it create new emails, respond automatically, or submit them—but we chose to be careful and only give access to tools we trust. This is a good practice until you’re confident in your checks and balances.
+
+So, to recap: today we read emails and drafted a response, showing how agents can interact safely with Gmail. The possibilities are enormous, but we take baby steps to build confidence.
+
+With that, we wrap up Day Three of Week One. These were our first few integrations, and they were exciting ones:
+
+We connected to Google Drive and Sheets and automated stock price updates.
+
+We connected to Gmail, allowing an agent to read and draft emails.
+
+The goal is not just to watch but to experiment yourself—build workflows, inspect nodes, examine tool inputs and outputs, and practice passing data between steps. Tomorrow, we’ll continue with more integrations, explore JSON and table views, and get even more comfortable with connecting AI agents to various data sources.
+
+And just like that, week one, day three is complete. Can you believe it—20% of the course done already? We’ve built what could practically be an automated business process in just a few days. It only gets better from here.
+
+See you tomorrow!
