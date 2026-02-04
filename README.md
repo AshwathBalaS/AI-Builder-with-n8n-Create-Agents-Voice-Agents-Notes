@@ -61,6 +61,16 @@ This Repository contains my "AI Builder with n8n: Create Agents &amp; Voice Agen
 
 **AC) Day 5 - n8n Workflow Automation: Using If Nodes for Conditional Logic**
 
+**II) Section 2: Week 2: Accelerate With Voice Agents And RAG**
+
+**A) Day 1 - How to Build AI Voice Agents with ElevenLabs Agent Platform**
+
+**B) Day 1 - Build Your First AI Voice Agent with ElevenLabs Conversational AI**
+
+**C) Day 1 - ElevenLabs Voice Agent Tools: Deploy Conversational AI with Widgets**
+
+**D) Day 1 - Building Multi-Agent Workflows with ElevenLabs Voice AI Agents**
+
 
 
 
@@ -1892,3 +1902,211 @@ The executions and logs confirmed that the workflow ran correctly. You can even 
 This completes our deployed workflow. It’s a real-world example of automating a business process. You could even extend this trigger from a web form to a scheduled task, letting it run automatically once a day and notifying you of portfolio rebalancing decisions. That is a fitting conclusion to our first week of the program: automating workflows with AI agents.
 
 Congratulations—you’re a third of the way through the program! Next week, we’ll explore voice agents and 11 Labs, which is going to be a lot of fun. But for now, take a moment to celebrate the progress you’ve made.
+
+# **II) Section 2: Week 2: Accelerate With Voice Agents And RAG**
+
+# **A) Day 1 - How to Build AI Voice Agents with ElevenLabs Agent Platform**
+
+Well, I’m really happy you’re back for more. Last week was quite intense—we covered a lot of material and ended up with a pretty substantial project by the end. There was a lot going on, and I hope you enjoyed working through it. Now, though, we have a couple of really fun days ahead.
+
+This is Week Two, Day One of the Agentic AI Builder program, focused on AI agents and voice agents in n8n. For today, however, we’re not going to touch n8n at all. I’m very excited to welcome you to ElevenLabs Day. Today is a purple day, which means it’s all about core skills—specifically, building new expertise in the area of voice agents.
+
+Last week was all about automation. This week is called Accelerate, because the focus is on using the latest frontier technologies to do more—and do it faster. ElevenLabs is a perfect example of a product that enables acceleration. It’s somewhat magical, honestly, and I hope you feel the same way once you see it in action.
+
+ElevenLabs is both a company and a product, as is often the case in tech. It was founded very recently, in 2022, and it’s already a unicorn company. It’s widely considered the leading company in audio generation, especially when it comes to quality. While it is more expensive than many alternatives—including free and open-source options—you truly get what you pay for. In terms of audio realism and quality, ElevenLabs is considered top shelf.
+
+The company was founded by a former Googler along with someone from Palantir, who came together to build the business. On the website, ElevenLabs positions itself around two main sibling products. The first is the Creative Platform, which focuses on generating audio and building audio avatars. The second is the Agents Platform—and you can probably guess which one we’re going to use. Most of our time will be spent in the Agents Platform.
+
+In many ways, the Agents Platform feels a bit like n8n itself. You’ll notice some familiar canvas-style layouts and workflows, but it’s highly specialized for voice agents. As you’ve already seen in the curriculum, we’ll be building workflows that connect ElevenLabs and n8n, and we’ll make decisions about which responsibilities belong to ElevenLabs and which belong to n8n.
+
+Regarding pricing, as I mentioned earlier, ElevenLabs is on the pricier side—but it does offer a free tier. You can follow along with this entire course without paying anything. I’ll admit that I personally signed up for the Starter plan at $5 per month, because I’ve been using it quite a bit and really enjoying it. That said, it’s absolutely not required—you can stick with the free tier, which is quite generous.
+
+Let’s take a look at the product itself. If you go to elevenlabs.io (one word), you’ll see the tagline: “The world’s most realistic voice AI platform.” Right at the top, you’ll notice two navigation options: Creative Platform and Agents Platform—the two platforms I mentioned earlier. Each has its own set of use cases and documentation.
+
+There’s also a dedicated Developers section that includes documentation and API references for both platforms, side by side. If you click on Pricing, you’ll see the free tier along with paid plans like Starter, Creator, and Pro. Pricing may vary by region and can change over time, so what you see might not exactly match my screen, but hopefully the free tier is still available—and maybe even more generous.
+
+On the homepage, there’s an instant demo where you can press play and hear a sample voice narration. The quality is genuinely impressive. You might think it’s cherry-picked because it’s on the landing page, but ElevenLabs really is that good—you’ll see it for yourself once you start using it.
+
+The Creative Platform offers things like text-to-speech, audiobook creation, and even music generation. The Agents Platform, on the other hand, is where you build voice agents, which is exactly what we’ll be focusing on. You can also explore voice replication examples—like Michael Caine or Matthew McConaughey—though using those yourself typically requires a paid plan.
+
+Overall, ElevenLabs is an industry leader in audio quality. It’s not the cheapest option, but the quality more than justifies the price, and the free tier is sufficient for learning and experimentation.
+
+To get started, click Sign Up. During the signup flow, you’ll be asked which platform you want to use—choose the Agents Platform. You can switch platforms later, so you’re not locked in, but this is the right place to start. You’ll likely be prompted to create an agent immediately—just choose the Start from Scratch option. The process is straightforward.
+
+Once logged in, you’ll see a dashboard. On the left side, there’s a toggle that lets you switch between the Creative Platform and the Agents Platform. While the Creative Platform includes features like speech, audiobooks, video, and music generation, we’ll be staying firmly within the Agents Platform for now.
+
+Inside the Agents Platform, the main navigation is divided into Configure, Monitor, and Deploy. We’ll start by clicking Configure Agents. You may see an existing test agent if you’ve already experimented. Other sections, like Tools, will become clearer as we progress.
+
+For now, we’ll begin our first experiment by clicking the New Agent button.
+
+# **B) Day 1 - Build Your First AI Voice Agent with ElevenLabs Conversational AI**
+
+Okay, here we go.
+
+To begin, I click New Agent. The interface asks, “What type of agent would you like to create?” I select Blank Agent. Next, it asks for a name that reflects the agent’s purpose. I’ll call it First Agent. I keep Chat Only turned off and then press Create Agent.
+
+The agent is created, and the configuration screen appears. The first thing we see is the system prompt, which defaults to “You are a helpful assistant.” You already know what that means—it sets the overall behavior and personality of the agent.
+
+Below that is the first message, which starts with: “Hello. How can I help you today?” You’ll notice a note explaining that you can add variables using double curly braces, which should feel very familiar if you’ve used expressions in n8n.
+
+The default voice selected is Eric, described as smooth and trustworthy. We’ll be the judge of that. The language is set to English, and we can also choose which LLM model to use. By default, it’s Gemini 2.5 Flash.
+
+If we open the model selector, we can see additional options, including experimental GPT-4o-style models. There’s also Gemini 3 Pro, but notably not Gemini 3 Flash, which makes sense because that model was only released very recently. For now, we’ll stick with the default setup.
+
+At this point, everything is configured, so it’s time to try it out.
+
+I click Preview to run the agent. An avatar appears along with a “cool AI agent” button. Let’s give it a shot.
+
+The agent greets me: “Hello. How can I help you today?”
+I respond, “Well, hello there.”
+The agent replies smoothly and naturally, asking how it can help.
+
+I ask for a fun fact, and it tells me that a group of flamingos is called a flamboyance—a delightful and fitting name. I then ask for a joke about flamingos, and it delivers one with good timing and humor. After thanking it, the agent politely asks if there’s anything else it can help with.
+
+That interaction is genuinely impressive. Of course, credit goes to Gemini 2.5 Flash for the intelligence behind the responses, but ElevenLabs deserves real credit for how fast, seamless, and natural the voice interaction feels. It genuinely feels like speaking to a real voice agent, and the frictionless experience is fantastic.
+
+Next, let’s take it a bit further and try a business-style conversation.
+
+I update the system prompt so that the agent is now a helpful assistant for an airline. The agent assists customers with their travel needs. I also provide some reference information: a return ticket from New York to London costs $599.
+
+Now that we’ve added context, let’s change the voice. We browse the available options:
+
+Miss Walker – warm, reassuring, and round
+
+Jason – calm and soothing
+
+Stokes – relaxing, casual, and warm
+
+We decide to go with Miss Walker.
+
+With that done, I press Preview again to test the agent.
+
+The agent greets me, and I say I’d like to go on a trip. It asks for my destination and travel dates. I tell it I want to travel from New York to London next week. The agent immediately references the price we included earlier—$599—and asks if I’d like it to check availability.
+
+This confirms that the agent is successfully using the context and information provided in the system prompt. It’s relatively simple functionality, but what stands out is how quickly and easily it’s put into action.
+
+Now, let’s explore some of the more advanced features of ElevenLabs by navigating through the tabs.
+
+We start with Workflow, which is marked as new. This should look familiar—it closely resembles the n8n canvas. You can add nodes, connect agents, and even use tools to route conversations between different agents.
+
+That said, we’re not going to spend much time here. We’ll be using n8n for workflows instead, since we already know it well and want to invest our effort there. This workflow tool in ElevenLabs is still somewhat raw, as indicated by its “new” label, but you’re welcome to experiment with it.
+
+If we click Templates, we can choose something like Qualification Flow. This template shows an agent whose job is to decide whether a user has a technical issue or a billing issue. Based on that decision, the LLM routes the conversation to a different agent using a tool.
+
+Each agent has its own prompt and can respond differently depending on the issue type. This allows you to set up multiple voice agents and route conversations dynamically based on conditions. It’s fairly self-explanatory, so we’ll move on for now.
+
+Next is Branches, where you can create and test different versions of your agent.
+
+Then we come to Knowledge Base, which is where things start to get really interesting. This is where you provide your agent with background knowledge or subject matter expertise.
+
+Let’s try it out. I click Add Document and choose Create Text. I name the document Apple Product Details. I then paste in a chunk of text that ChatGPT generated for me—summarized information about Apple products based on their website.
+
+Once I click Create Text, the document is added to the agent’s knowledge base.
+
+Now we go back to the agent and update the system prompt to say: “You are able to answer questions on Apple products.”
+
+Let’s test this. We’ll switch voices again and choose Jason, described as calm, meditative, and soothing.
+
+I press Preview and start the conversation. I ask about buying an Apple Watch, specifically asking for the latest version and its price. The agent responds accurately, referencing the Apple Watch Series 11, its approximate price, and also mentioning other models like the SE and Ultra versions.
+
+This confirms that the agent is successfully consulting its knowledge base to answer questions.
+
+This is our first real glimpse of RAG (Retrieval-Augmented Generation). Later this week, we’ll build this in a much more robust, industrial-strength way using n8n, and we’ll connect that system to ElevenLabs. But even here, you can see how easy it is to give an agent domain expertise just by uploading documents through the UI.
+
+And with that, we’ll leave it here.
+
+You should absolutely give this a try yourself.
+
+# **C) Day 1 - ElevenLabs Voice Agent Tools: Deploy Conversational AI with Widgets**
+
+Okay, moving on through the remaining features of ElevenLabs using the main navigation.
+
+The Analysis section is where you can review previous conversations that have taken place with your agent. You can see the history of interactions and confirm that they’ve all run successfully. This is useful for validating behavior and checking how your agent has responded over time.
+
+Next is Tools, which is exactly what it sounds like. This is where you equip your agent with tools, very much like you would in n8n. This section is particularly important because it’s one of the two ways we can connect an ElevenLabs agent to n8n. In practice, one of these tools can be configured to call out to an n8n workflow. We’ll be doing this tomorrow when we add our first custom tool.
+
+There are also system tools—built-in tools that you can enable with a simple toggle. These allow the agent to do things like end a conversation gracefully instead of continuing indefinitely. There’s also a custom button option that allows you to surface additional information to the user, as well as a detect language tool, which lets the agent automatically identify the language being spoken and continue the conversation accordingly.
+
+One particularly important tool is Transfer to Agent. This is how you can build workflows across multiple agents. You define a description that tells the model when it should transfer control, specify the conditions under which the transfer should happen, and define the transfer message. Essentially, one LLM decides that it’s time to hand off control to another agent with a different prompt or responsibility. This is the core mechanism for chaining agents together using tools.
+
+You can achieve similar results using the newer Workflow feature or by selecting a template, which is essentially a shortcut for configuring all these tools automatically.
+
+That covers Tools.
+
+Next is Tests, which is where you can define different test scenarios and review past runs. This helps you validate agent behavior under various conditions.
+
+The Widget section is a very important one. This is where you configure how your agent actually appears to users. You may remember the nice blue avatar you saw earlier—this is called the orb. This is where you customize it.
+
+That said, you’re not limited to the orb. You can upload an image instead—perhaps a photo of yourself or a brand mascot. You can also provide a URL pointing to an image if you already have one hosted elsewhere.
+
+Crucially, this section also gives you an embed code. You can paste this directly into a webpage to surface your agent there. For example, if you’re using WordPress, you can embed this as a script tag, and your agent will appear directly on your site. The same applies to any platform where you can deploy HTML. If you’re working with a technical team, you can simply hand them this snippet, and they can add it to your website. Once embedded, the blue orb will appear and connect directly to this agent. It really is that simple.
+
+If you scroll further down, you’ll find extensive configuration options for styling and coordinating the avatar, as well as adding more details to the widget itself. There’s a lot here that can be customized without needing to be particularly technical.
+
+You can then share the widget wherever you like. There’s also a newer Widgets V2 option, which I haven’t personally used yet. This version is more sophisticated and supports headers, lists, code blocks, and additional layout controls, giving you even more flexibility over how the widget is embedded and displayed.
+
+Overall, this is a major step forward—it allows you to embed a live, interactive voice agent directly into your website with minimal effort.
+
+Next is Security, which includes various configuration options. You can require authentication so that users must log in before interacting with your agent. You can also control what users are allowed to do—for example, whether they can switch to text-only mode instead of voice. By default, this option allows users to choose whether they want to type instead of speaking, but you can restrict or expand this flexibility as needed.
+
+There’s also support for webhooks, which ElevenLabs can call at the beginning and end of a conversation. By now, you know exactly what webhooks are and how they work. This allows ElevenLabs to call out to another system via a URL you provide. You can also set usage limits, such as the maximum number of calls per day for a particular agent, to ensure things don’t go off the rails.
+
+Finally, there’s the Advanced tab, which contains additional settings. You can configure the agent to be text-only if needed. There’s also a newer feature called Scribe for automatic speech recognition.
+
+You can define keywords that are likely to come up in conversations—such as product names like Apple Watch. This is especially useful for unusual or branded terms, as it increases the likelihood that the speech recognition system correctly identifies them.
+
+There are also parameters that control the personality and behavior of the agent—how quickly it jumps into the conversation, how long it waits before asking something like “Are you still there?”, and how it handles silence. I believe I adjusted these from the default at one point because the agent was responding too quickly. You can experiment with these settings to find what feels most natural.
+
+You can also configure the agent to automatically end the conversation after a period of silence, along with a few other behavioral tweaks.
+
+At this point, I strongly encourage you to explore these settings yourself. Play around with the fields, press the Preview button frequently, and get a feel for how everything works. Definitely experiment with the Knowledge Base as well.
+
+ElevenLabs makes building voice agents incredibly simple—and this hands-on experimentation is the best way to really understand it.
+
+# **D) Day 1 - Building Multi-Agent Workflows with ElevenLabs Voice AI Agents**
+
+Okay, we’ll bring this home by building a quick agent workflow to solve a small business-style problem. Nothing too serious—just a toy example to show what’s possible.
+
+We’ll start by going to Knowledge Bases and adding another document. This time, we’ll create a new text document and call it Stock. This document represents what the store currently has available. For our example, the stock will include a few Apple products: an Apple Watch Series 11, an iPhone 13 Pro Max, and a MacBook Pro M4. Of course, in a real scenario this could be a much longer and more detailed document. Once that’s done, we create it as another knowledge base.
+
+Now we’re going to set up a small agent workflow using the Workflow feature. To get started quickly, we’ll pick a template—specifically, the Qualification Flow template that we looked at earlier. This gives us a solid starting point for our experiment.
+
+Let’s begin editing the workflow. The first agent is called the Qualification Agent. We’ll repurpose this to act as the main agent, the one that kicks off the conversation. We’ll keep things simple. The conversation goal (the prompt) will be: “You’re a customer support representative at a store that sells Apple products. You direct the user’s question as appropriate.”
+
+We turn on Override Prompt, which means this prompt completely replaces anything defined in the agent tab. For the voice, we’ll choose Miss Walker to answer the call. We also make sure that this agent does not inherit any knowledge base, meaning she comes into the conversation without product or stock knowledge. That’s intentional—her job is just to route the conversation.
+
+That completes the setup for the first agent.
+
+Next, we move on to what was originally called Technical Support. We’ll rename this agent to Product Support, which is more accurate. The prompt here will be: “You’re able to answer general questions about Apple products.” We again enable Override Prompt.
+
+For the voice, we’ll choose someone new—Russell, who’s described as outgoing and excited. This agent will need access to product knowledge, so we disable inheritance and explicitly attach the Apple Product Details document to this agent’s knowledge base. Now the Product Support agent has both the right prompt and the right information.
+
+With that done, we move to the final agent, which was originally Billing Support. We’ll rename this one to Stock Specialist. This agent’s job is to answer questions about what the store currently has in stock. The prompt reflects that purpose, and we again override the previous prompt.
+
+For the voice, we’ll choose Stokes. This agent also needs a knowledge base, so we disable inheritance and attach the Stock document we created earlier. At this point, the Stock Specialist is fully configured.
+
+The last thing we need to do is define the edges—these are the conditions that determine how the main agent routes the conversation.
+
+We select the first edge, which is an LLM condition. It’s currently labeled “Technical Issue,” so we change that to Product Question. The condition becomes: “The user has a general question about Apple products.”
+
+Next, we select the second edge, also an LLM condition. We rename it from “Billing Issue” to Stock Question. The condition is: “The user has a question about what Apple products the store has in stock.” These conditions are clear and unambiguous, which is exactly what we want.
+
+With everything set up, we’re ready to test the workflow.
+
+We press Preview and start the AI agent. The main agent answers the call and greets the user. We ask about the latest model of the Apple Watch. The system correctly routes the conversation to the Product Support agent, who answers using the Apple Product Details knowledge base. The response is accurate and natural, and once the interaction is complete, the conversation terminates cleanly. We rate the conversation as very good.
+
+Let’s try a second test, this time triggering a different route.
+
+We start again and ask what models of the MacBook Pro are in stock. This time, the conversation is correctly routed to the Stock Specialist, who consults the stock knowledge base and confirms that the MacBook Pro M4 is available. Another successful test run.
+
+What you’ve just seen is a simple but powerful example of intent-based routing. The user asks a question once, and that question is routed seamlessly to the correct specialist—there’s no need for repetition. In a more advanced setup, you could add additional edges to allow conversations to bounce back and forth between agents as needed.
+
+We’re not going to dive deeper into this tool, because our real focus will be on connecting voice agents to n8n. However, it’s important to know that if you have simpler use cases—such as a customer support agent with a knowledge base and basic routing—ElevenLabs can handle everything on its own.
+
+It’s easy to use, high quality, and surprisingly powerful. So feel free to experiment with it and explore what it can do.
+
+That wraps up our first day experimenting with ElevenLabs and building voice agents. I hope you were genuinely impressed by how easy it was to create multiple voice agents, add knowledge bases, and introduce basic workflows.
+
+We won’t go much further inside ElevenLabs alone, because the real magic happens when we combine it with n8n. That integration—the marriage of ElevenLabs and n8n—is incredibly powerful, and that’s what we’ll start building tomorrow.
+
+Before we move on, though, take a moment to appreciate the progress: we’re already 40% of the way through. I hope you’re starting to feel more like a pro—because once we hook these two platforms together, you definitely will.
