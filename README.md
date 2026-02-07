@@ -71,6 +71,25 @@ This Repository contains my "AI Builder with n8n: Create Agents &amp; Voice Agen
 
 **D) Day 1 - Building Multi-Agent Workflows with ElevenLabs Voice AI Agents**
 
+**E) Day 2 - ElevenLabs n8n Integration: Building Conversational AI Voice Agents**
+
+**F) Day 2 - Automate Text-to-Speech Using ElevenLabs API in n8n Workflows**
+
+**G) Day 2 - How to Build a Voice AI Agent with n8n Webhook and ElevenLabs API**
+
+**H) Day 2 - Build an AI Voice Agent with n8n, ElevenLabs, and Gemini Workflow**
+
+**I) Day 2 - How to Connect ElevenLabs AI Voice Agent to n8n Workflow with Webhooks**
+
+**J) Day 2 - How to Connect ElevenLabs AI Voice Agent to n8n Using Webhooks**
+
+**K) Day 3 - What is RAG in AI: Retrieval-Augmented Generation Explained**
+
+**L) Day 3 - How Embedding Models Enable Semantic Search in RAG Systems**
+
+**M) Day 3 - How RAG Works: Vector Databases and Semantic Search Explained**
+
+**N) Day 3 - Agentic RAG vs Traditional RAG: Building Smarter AI Retrieval Systems**
 
 
 
@@ -2110,3 +2129,1095 @@ That wraps up our first day experimenting with ElevenLabs and building voice age
 We won’t go much further inside ElevenLabs alone, because the real magic happens when we combine it with n8n. That integration—the marriage of ElevenLabs and n8n—is incredibly powerful, and that’s what we’ll start building tomorrow.
 
 Before we move on, though, take a moment to appreciate the progress: we’re already 40% of the way through. I hope you’re starting to feel more like a pro—because once we hook these two platforms together, you definitely will.
+
+# **E) Day 2 - ElevenLabs n8n Integration: Building Conversational AI Voice Agents**
+
+Look at this journey.
+
+Some days are more challenging days, and some days are more satisfying days.
+Today is one of those days where it’s both.
+
+Today is challenging.
+Today is satisfying.
+Today is a bit of both.
+
+We’ve got something challenging in front of us, and we’ve got something satisfying too. Today, we’re integrating 11 Labs with n8n. We’re putting them together, and honestly, it’s going to be fun.
+
+So obviously, we’re going to be using n8n and 11 Labs together in order to build voice agents that have workflows inside n8n.
+
+Now, there are actually two completely different ways to do this—two very different integration patterns. And we’re going to do both. One of them is definitely better, and I’ll explain which one and why, but we’re still going to build both approaches. That’s because it’s good practice, and it will really help you understand what’s going on under the hood.
+
+First Integration Pattern: n8n Is the Boss
+
+The first approach is where n8n is running the show. It orchestrates everything. The entire end-to-end workflow is described inside n8n, with all the different steps laid out clearly.
+
+One of those steps is calling the 11 Labs API to convert text into speech—this is when we want the system to talk back to us. We’ll use 11 Labs specifically for generating the audio.
+
+Another step, usually earlier in the workflow, is speech-to-text. This is where we take incoming audio and convert it into text, which then goes into an LLM.
+
+So in this pattern, these speech-to-text and text-to-speech actions are simply steps inside an n8n workflow, where n8n calls out to 11 Labs as needed.
+
+Hopefully, that makes complete sense—this is how everything can come together when n8n is in control.
+
+Second Integration Pattern: 11 Labs Is the Boss
+
+So what’s the other way?
+
+As you probably guessed, the other approach is where 11 Labs is running the show. In this pattern, 11 Labs owns the orchestration and drives the process from start to finish.
+
+Here, you build a voice agent inside 11 Labs, much like we’ve already done before. You then give that voice agent a tool. We didn’t actually use tools previously, but I showed you how they work.
+
+That tool is used to make a call into n8n, where n8n runs some sub-workflow. In this setup, your business logic and workflows live inside n8n, but they’re triggered by 11 Labs.
+
+So in this model, the two systems collaborate. However, 11 Labs owns the overall end-to-end process and is effectively in charge.
+
+Why Choose One Pattern Over the Other?
+
+So why would you do it one way versus the other?
+
+The big benefit of n8n-led orchestration is simplicity. Everything is in one place. You get a single canvas where you can see the entire workflow from start to finish, which is great.
+
+Another advantage is flexibility. You get a more switchable API setup. You’re calling out to 11 Labs, but you could easily replace that with any other text-to-speech or speech-to-text provider. You just swap out those API calls, and you’re using a different vendor. That’s super convenient.
+
+Those are the main benefits of n8n-driven orchestration.
+
+So Why Ever Choose 11 Labs-Led Orchestration?
+
+At this point, you might be wondering why you’d ever choose the 11 Labs-led approach. It sounds more complex, right?
+
+Well, here’s the key reason:
+
+Latency.
+
+Latency is everything when it comes to voice agents.
+
+If you use n8n to orchestrate everything, you first have to collect the audio, then make a call to convert that audio into text. It’s a linear process.
+
+11 Labs, on the other hand, is a voice-first platform. It’s designed for real-time interaction from the ground up. As you’re speaking, it’s already converting your speech into text. It’s not a stop-start process—it’s continuous and optimized for conversation.
+
+Because of that, it’s far better at handling real-time voice interactions. And when you combine it with n8n, you get the best of both worlds: powerful voice capabilities from 11 Labs and flexible orchestration from n8n.
+
+Yes, it’s more complex—but the payoff is huge.
+
+Advanced Capabilities of 11 Labs
+
+There’s another important benefit to using 11 Labs as the primary orchestrator.
+
+11 Labs has advanced features—like the ability to connect to telephone systems, allowing your voice agent to actually talk to people over the phone.
+
+If you rely solely on n8n to collect audio, you miss out on these advanced, production-grade voice features. By letting 11 Labs lead, you unlock everything it has to offer.
+
+So there are some very strong advantages on the right-hand side as well.
+
+Which Approach Do I Recommend?
+
+So which one do you think I’m going to recommend?
+
+Definitely the right-hand side—the 11 Labs-led orchestration.
+
+I usually say that simpler is better. That’s one of my mantras. I always try to push for simplicity over unnecessary complexity.
+
+But this is one of those rare cases where the added complexity is absolutely worth it.
+
+Latency matters. Waiting while talking to a voice agent is agonizing. Real-time responsiveness is non-negotiable. For that reason alone, you want 11 Labs as your voice agent platform, and you want to use the right-hand pattern.
+
+That said, we’re going to build both approaches. Many people naturally start with the left-hand pattern because it’s more obvious and easier to understand. But very quickly, you’ll feel the difference—and you’ll understand why the right-hand approach is so much more compelling.
+
+Quick Refresher Before We Build
+
+Now, don’t hate me—but before we start building (and yes, there’s some really good building coming up), we need a quick refresher on a few API concepts. This is good stuff, and it’ll help everything make more sense.
+
+First, let’s quickly revisit webhooks.
+
+A webhook is when you expose an endpoint—a URL—that other systems can call to notify you that something has happened. Instead of you asking for information, someone else calls you.
+
+For example, Slack might call your webhook to tell you that a message arrived. An email system might call your webhook to say an email was received. When an external system calls your endpoint like this, that endpoint is called a webhook.
+
+APIs, Endpoints, and HTTP
+
+You’ve heard me say “calling an API” a lot.
+
+When we say that, we usually mean making a web request using HTTP. HTTP is the standard protocol the web uses to exchange information—just like loading a web page.
+
+The web address you call is known as an endpoint.
+
+So the proper language would be:
+“I’m calling an API by making an HTTP request to an endpoint.”
+
+On the flip side, if someone is calling your endpoint to notify you of an event, that endpoint is called a webhook.
+
+HTTP Methods: GET and POST
+
+There are different types of HTTP requests, known as methods (or sometimes called verbs).
+
+The two most common ones are:
+
+HTTP GET – used to retrieve information
+
+HTTP POST – used to send information
+
+When you make a GET request, you’re asking for data, and the response usually comes back as JSON.
+
+When you make a POST request, you’re sending data, and that data is usually sent as JSON.
+
+You’ll see us selecting GET and POST in several places, so this is just to make that terminology familiar.
+
+# **F) Day 2 - Automate Text-to-Speech Using ElevenLabs API in n8n Workflows**
+
+Oh, that was just a cheap move to get you to come to the next video.
+
+We’re not actually going to do any building yet.
+
+We’ve got one more slide to go.
+
+I just want to say one more thing. If you look back at the diagram that shows the idea of making an endpoint request–response, where you make an HTTP call to an endpoint, and then the idea of receiving an HTTP request to a webhook to notify us that something has happened, there are nodes in n8n that apply directly to each of those concepts.
+
+We’ve already discovered them.
+
+For example, with Slack, we had a trigger node that received a webhook, and we also had a node for posting a message, which is a typical request–response API interaction.
+
+In many cases in n8n, you’ll find this kind of pair of nodes: one node that receives incoming events via a webhook, and another node that is responsible for making API calls out to the external service.
+
+There are also generic nodes used to talk to platforms that haven’t been explicitly built into n8n. In those cases, there isn’t a dedicated integration component for that third party, but the platform still exposes endpoints and expects webhooks.
+
+Because of that, you can still integrate with it generically, based purely on those URLs.
+
+There is a generic version of a request–response node called the HTTP Request node. This node simply calls a URL endpoint. You give it a URL, and the output of the node is whatever comes back from that call.
+
+On the other side, there is also a generic version of a webhook. This is called the Webhook node.
+
+The Webhook node has both a test URL and a production URL, just like the Slack trigger did. It provides a URL that can be called as a webhook while you’re in test mode, or once you’ve deployed and activated the workflow.
+
+The workflow is triggered when someone else hits that URL. You can configure it to either respond immediately to the third party, or to run an entire workflow and then respond with whatever a later step returns.
+
+Those are configuration details we’ll look at later.
+
+But the main point is this: with some external systems like Slack, you get out-of-the-box nodes—usually two of them: one for triggers and one for making API calls.
+
+If you don’t have an out-of-the-box node like that, you can effectively build your own integration using the HTTP Request node and the Webhook node.
+
+Hopefully that makes sense.
+
+This is something that will come up again and again, so you’ll get used to it. That’s how you build your own integration with a platform that doesn’t already come bundled with n8n.
+
+Okay.
+
+Now it’s time to actually build stuff.
+
+I’ve teased you enough.
+
+Now we’re really going to do it, and we’re going to start in 11 Labs.
+
+You remember looking at 11 Labs. I’ve just signed in, and you should as well.
+
+At the top, you’ll see a dropdown with options like Agents Platform and Creative Platform.
+
+Remember, we’re going to begin with Technique One, where n8n is the boss.
+
+So we’re not going to be setting up agents inside 11 Labs. Instead, we’re going to use 11 Labs purely as a backend service that can convert speech to text and text back into speech.
+
+And the way we do that is using the 11 Labs API.
+
+To do that, we need an API key.
+
+Here’s how you get it.
+
+You go to Developers, which is down here, and you click on it. That takes you to the developer section.
+
+There’s a tab called API Keys. When you go there, you’ll see existing API keys—like the one I already have.
+
+You’re going to press Create Key.
+
+I know you already know how to create API keys, but I’m still going to show you.
+
+You give the key a name—anything you like. For example, I can call it “key two”.
+
+It’s a good idea to keep Restrict Key turned on.
+
+The first restriction you’ll see is Monthly. This looks like a monthly limit, which is a good thing to have.
+
+You might think, like I originally did, that typing 10 here would mean $10 per month—but it doesn’t.
+
+This is talking about the number of credits. Most API calls take around 30 to 60 credits.
+
+You should have plenty of free credits included with your plan. If you’re on a paid plan like me, you’ll have tens of thousands of credits available.
+
+You can put whatever monthly number you want here, but I recommend something like 500 credits as a good starting point. Keep an eye on it, and if you use up your monthly credit limit, you can always come back and increase it.
+
+Next, you select access permissions.
+
+You don’t need write access. Read access is enough for everything we’re doing here. Even so, you can give access broadly if you want.
+
+Once that’s done, you press the Create Key button.
+
+A key pops up. You copy it into your clipboard and click OK.
+
+Keep that key safe, because we’re going to paste it somewhere else in a moment. You might also want to store it securely.
+
+If you ever have a problem with your API key, you know what to do. You come back here, create another one, disable old keys you’re no longer using, or edit permissions as needed.
+
+Always be careful with API keys. Copy them carefully. Don’t paste them into a word processor. You know the deal.
+
+And remember—you can always create a second one.
+
+Okay.
+
+Now we’re back in n8n.
+
+I’m signing into our cloud account and into our instance.
+
+Here we are.
+
+I’m going to press the Create Workflow button to start a new workflow.
+
+We’ll begin this time with a Chat Message node, just like usual.
+
+Click it, then press Escape to come back.
+
+If you see logs up here, remember you can just click them to dismiss them.
+
+Now click the plus button or press Tab, and go to the AI Agent selection.
+
+Here it is.
+
+Press Escape again to return.
+
+Now we choose the chat model.
+
+As always, you could use OpenRouter or OpenAI. This time, just to keep things different for this week, I’m going to use Google Gemini.
+
+There are two Google options:
+
+Google Gemini, which refers to Google AI Studio
+
+Vertex AI, which is more enterprise-level
+
+If you don’t already know Vertex AI, stick with Google Gemini.
+
+For credentials, I click Create New Credential.
+
+I’ve already set up an API key in AI Studio (you can just search for “Gemini AI Studio”).
+
+I paste the key in carefully, press Save, and see that the connection was tested successfully.
+
+And that’ll happen for you too, because you’re a pro with API keys and they never cause any trouble.
+
+So now we’re going to be experimenting with Gemini.
+
+We’re not going to give it any tools or memory for this one.
+
+Let’s check the available models.
+
+I see Gemini 2.5 Flash.
+
+Let’s see if we can use Gemini 3.
+
+Yes—there it is: Gemini 3 Flash Preview.
+
+By the time you’re watching this, it’ll probably just be called Gemini 3 Flash. Pick whichever one you want.
+
+That’s what I’ll pick.
+
+Now we open the chat and say:
+
+“Hi there.”
+
+Off it goes.
+
+It responds:
+“Hello! How can I help you today?”
+
+Great.
+
+Gemini is working.
+
+There’s not much voice-related happening just yet.
+
+The next thing we’re going to do is add a step that makes an API call to 11 Labs to turn this text into audio.
+
+I press the plus button and search for 11 Labs.
+
+Up it comes as a possible next node.
+
+When you click on it, you might see that it’s not installed yet. There’ll be a button to install it.
+
+If you’re using n8n Cloud, you just press the button and it installs automatically.
+
+If you’re using the self-hosted version, there are a couple more steps, but they’re very simple. It’s just a community node, and you can Google the instructions.
+
+Once installed, it appears like this.
+
+Now we scroll down to the node actions.
+
+We choose Convert Text to Speech.
+
+That’s what we want.
+
+The node appears, ready to connect to 11 Labs.
+
+The first thing we need to do is select a credential and create a new one.
+
+This requires the 11 Labs API key we created earlier.
+
+I paste in the key from my clipboard.
+
+If you accidentally paste in your Gemini key, it won’t work—it must be the 11 Labs key.
+
+I save it.
+
+And because I’m a pro, it connects and tests successfully on the first try.
+
+You got that too, because you’re a pro as well.
+
+Congratulations.
+
+Now we choose:
+
+Operation: Text to Speech
+
+Voice: Ms. Walker
+
+We choose Ms. Walker because she’s warm and reassuring, and that’s what we like.
+
+Now we need to choose the text that will be spoken.
+
+This is the input that will be sent to 11 Labs to convert into audio.
+
+If we typed something fixed—like the word “bananas”—it would always generate audio for “bananas”, and that’s not what we want.
+
+We want the text to change every time.
+
+So we need to use an expression.
+
+You might be wondering why we can’t say “let the model decide”.
+
+Remember, you can only do that with tools.
+
+This is not a tool. This is just the next step in the workflow.
+
+We always want audio to be generated, so there’s no LLM decision here.
+
+It’s a fixed workflow step.
+
+So how do we tell it to use whatever text came from the LLM?
+
+We use an expression.
+
+You already know this.
+
+It starts with double curly braces.
+
+Inside, we reference the incoming JSON using $json.
+
+The field we want is called output.
+
+So the expression becomes:
+
+$json.output
+
+And when we do that, we see the result:
+“Hello! How can I help you today?”
+
+Perfect.
+
+You don’t even need to type it.
+
+You can just drag and drop the output field into the text box.
+
+If it doesn’t drop properly, just try again.
+
+There we go.
+
+Same result.
+
+So now this node is configured so that whatever text comes into it, it looks at the output field, takes that text, and sends it to 11 Labs for text-to-speech using Ms. Walker and our 11 Labs API key.
+
+And that’s it.
+
+We’re fully wired up.
+
+# **G) Day 2 - How to Build a Voice AI Agent with n8n Webhook and ElevenLabs API**
+
+Okay.
+
+Now we go back to our workflow and give this another try. We refresh it, say “hi there,” and see what happens.
+
+Off it goes.
+
+It’s gone to Gemini. It’s converted to speech. The whole workflow ran successfully.
+
+But it didn’t say anything to me.
+
+Maybe you were expecting that, but it couldn’t actually do that. All we did was call an API that generated a file, and that file is an audio file.
+
+Here it is.
+
+We can now download it and listen to it.
+
+I’m going to press the download button, and it’s just downloaded something. Then we’ll go and listen.
+
+So I’ve launched that thing, and I’ve got this little player here. Let’s see what we got.
+
+“Hello. How can I help you today?”
+
+Wow, okay. She’s very chirpy today.
+
+“Hello. How can I help you today?”
+
+That, I guess, is Miss Walker speaking with much enthusiasm to us. And that is how we got here. We got through this API.
+
+Let’s just try changing this to another person.
+
+Let’s try Jason. I think we need someone to counteract that energy level—someone calm, meditative, and soothing.
+
+Again, this is going to be making an API request to 11 Labs.
+
+Back we go.
+
+We reset the chat session and say “hi there.”
+
+Okay, here we go.
+
+It goes across, it goes to the agent, and it’s converted. That was all super quick. We got back a bunch of stuff.
+
+Now we come back into this node. Here it is.
+
+We download this file too, and then I’m going to try right-clicking on this. I’m going to show it in Finder.
+
+Then I’ll bring up the player as before, and we’ll listen to this.
+
+Okay, here we go.
+
+Let’s listen.
+
+“Hello. How can I help you today?”
+
+Definitely a more soothing Jason. Thank you.
+
+And that gives us a good sense of how it works to generate audio. It doesn’t feel very satisfying yet, though—we’ve got a little bit more to go.
+
+Okay, so next up, we’re going to go back to our workflow and do some new things.
+
+First of all, we’re going to get rid of this guy. No more coming in that way.
+
+Instead, we’re going to come in a completely different way.
+
+We are going to add a webhook.
+
+So I’m going to click plus, and I’m going to say “On webhook call.” This is saying that I want to be triggered by a webhook.
+
+Now, we’ve already experienced this a few times because we’ve used things like Slack and Telegram as well. Both of them allowed us to set up a webhook using n8n nodes specifically designed for Slack and for Telegram.
+
+In this case, we’re using the generic one—the one I mentioned that’s generic.
+
+This is the generic “On webhook call” node that allows us to configure any webhook. Anyone that hits this endpoint for test or this endpoint for production will trigger this particular webhook.
+
+So it’s going to sit there listening, and anyone that hits it will trigger it once we press the “listen for event” button.
+
+And that’s how it works. It’s that simple.
+
+There’s no more configuration than that, which I just love. It’s so easy.
+
+So when something comes in, it’s going to hit this webhook.
+
+All right, so what are we going to do with this?
+
+If I go back to the canvas again, let’s see where it put that webhook. I don’t know why it’s over there, but we’re going to move it right here.
+
+So in comes the webhook.
+
+And you can see, by the way, that it has GET selected. You can just look at it again—there’s this HTTP method that can be GET, or there are other things as well.
+
+But I mentioned that GET and POST are the most common.
+
+I’m going to change it from GET to POST because we want this to be pushing information to us.
+
+Okay, so that is set up.
+
+Now, whatever gets posted in, we’re going to set it up so that we can post some audio.
+
+I’m going to want to send that to 11 Labs again.
+
+So here we add in 11 Labs. This time, it’s something that’s going to take audio and convert audio into text—it’s going to transcribe.
+
+We come up here and say we want text. We want speech-to-text, taking audio and turning it into text.
+
+That’s what we’re going to do.
+
+This is going to connect with our 11 Labs account. It defaults to that, which is ideal.
+
+Now I’ll go back to the canvas, and we have this.
+
+Once this has gone to text, I’m simply going to plug that into the agent.
+
+Wow. Could it be as simple as that?
+
+So basically, we’re going to have a webhook URL that we can post audio to. When we do, it’s going to call 11 Labs to turn that audio into text, and it’s going to send the text to the agent.
+
+Now, you’re probably spotting that I’m doing something bad here. There’s something I’m missing.
+
+We’re going to try this out, see it fail, and then we’ll fix it so that we get it just right.
+
+The main thing we’ve done wrong—and you probably guessed this—is that we haven’t configured these different steps to correctly look at their inputs and interpret them properly to do the job they’re supposed to do.
+
+In this case, with this node, we haven’t told it how to read the input data and pluck out what it needs.
+
+And similarly, for the AI agent, remember that this thing is expecting to be connected to a chat trigger. It’s not, so it’s going to get confused. It’s not going to find chat input.
+
+The easiest way to fix this is to try it, see the data that comes in, and then correct it. And that’s what we’re going to do.
+
+But first, there’s one more step we need to add to this flow.
+
+The last step is all about what happens when this webhook is called—what gets returned to the web page that called it, or to the caller.
+
+Whoever the caller is, it’s going to be a web page, but it doesn’t have to be.
+
+Right now, the way we’ve set this up is to respond immediately. That means when you call this webhook, it responds with something like “okay,” while the flow continues running in the background.
+
+That’s kind of useless, because what we want to return to the web page is the audio. We want it to say something back.
+
+So we don’t want to respond immediately.
+
+There are a few options here, but we’re going to use “Respond using Respond to Webhook” node.
+
+That means we need to add another node at the end.
+
+Let me hide all of this for a second and give ourselves some more room.
+
+We add a node right here, and it’s of type “Respond to Webhook.”
+
+Here it is.
+
+This node can respond with whatever came back.
+
+We can respond with the first incoming item, but what we actually want is to respond with the field data.
+
+The way this comes in, we want to respond with a binary file, which is the audio data that comes back here.
+
+That’s what we want it to do.
+
+Potentially, we might need to add some more configuration here. We’ll see if this hangs together, and we’ll fix it once the whole flow is in place.
+
+So to recap, let’s hit the tidy button and clean this all up.
+
+Very nice.
+
+Here’s what’s happening.
+
+We’ve set up a webhook—that little lightning bolt represents a trigger. When someone hits the URL, it collects audio, sends it to 11 Labs to convert audio into text, passes that text into our agent, converts the agent’s output back into speech, and produces an audio file.
+
+That audio file is then returned as the response to the webhook—to the URL that someone else hit.
+
+Got that?
+
+Click around and make sure you understand what each of these nodes does.
+
+Then we’re going to test this thing out.
+
+On my desktop, I’ve got a file called voice HTML.
+
+I’ll put this in the course resources so you can get it too.
+
+It’s a very simple web page.
+
+You type in a URL, press “Start recording” to record directly in the web page—in this case, in a Chrome browser—then press stop.
+
+When you press “Send to n8n,” it posts that audio to the URL. Whatever comes back can then be played.
+
+It’s just simple HTML—a raw HTML file.
+
+I could tell you that I painstakingly wrote this HTML file, but that would be a complete lie.
+
+I simply asked—normally I use Claude Code, but this time I asked ChatGPT—“Can you make this HTML page?” And it just did.
+
+It even added helpful things like a tip saying to use the test URL while building and switch to the production URL later. I didn’t ask it to do that, but it was absolutely right.
+
+So good for it.
+
+You could also write this from scratch if you wanted, or just use mine. I’ll make it available.
+
+Okay.
+
+With that, we’re now going to find this URL, put it in here, and give it a whirl.
+
+And it’s not going to work at first, because we still need to fix up the workflow.
+
+But let’s at least try it.
+
+# **H) Day 2 - Build an AI Voice Agent with n8n, ElevenLabs, and Gemini Workflow**
+
+Okay.
+
+So I’m going to go over to my workflow here. I’m going to go to the webhook, and I’m going to take the test URL. I copy this URL.
+
+Now I go over to the web page, and I paste that webhook URL into the input field.
+
+Next, I’m going to start recording.
+
+“Well hi there.”
+
+Oh, I realize I have to say it loud while I’m using this site. Hang on.
+
+“Well hi there. What is two plus two?”
+
+Let’s try that again.
+
+“Well hi there. What is two plus two?”
+
+That seems to record quite nicely.
+
+Now I’m going to say Send to n8n.
+
+But first, of course, I go back to n8n, go back to the beginning, and press Execute Workflow so it starts listening and waiting for the test call.
+
+Then I go back to the web page, press Send to n8n, and come back here.
+
+And we’ve got a problem right away.
+
+This is a problem we were expecting.
+
+It says: Cannot read properties of undefined.
+
+Let’s double-click and see what’s happening.
+
+What came in is something called audio, but the file it was looking for was called data. That’s not right.
+
+So we have to change this to say audio, so now it knows it’s looking for a file called audio.
+
+Okay, let’s save it.
+
+Back we go.
+
+Oh, we also have to press Execute Workflow again so it starts listening.
+
+Now we can press Send to n8n again.
+
+Back here we go.
+
+And now we’ve got a problem in the AI Agent node.
+
+It’s going to be the same type of issue.
+
+Alright, so I double-click here and take a look.
+
+You can see under Source it thinks it’s connected to a chat trigger node. That’s no good.
+
+We need to click here and say Define Below, because just like before, we’re going to give it details of where to look for its input.
+
+We’re not going to give it something fixed. We want it to evaluate an expression.
+
+And we’re going to get that expression from over here.
+
+What we want to take is the transcribed text:
+
+“Well hi there. What is two plus two?”
+
+That’s what we want, right?
+
+Isn’t it cool? That is the transcribed text that came from 11 Labs.
+
+So it works.
+
+We’re going to take that and drop it into the input field.
+
+Or, if you were thinking ahead, you might have guessed what the expression would be.
+
+And if you were right, it’s simply JSON.text as the expression.
+
+You can see the result, and now it’s going to work.
+
+Okay, we escape back.
+
+We go back to the canvas, and now we’re going to try it one more time.
+
+So we press Execute Workflow.
+
+We go back to the web page.
+
+We press Send to n8n.
+
+Back over here it goes.
+
+It goes off, it goes off.
+
+“Two plus two is four.”
+
+Ha! There we go. Worked first time.
+
+Because that happened so fast, I’m going to do it one more time. I wasn’t expecting it to be that quick.
+
+Let’s try it again.
+
+Press Execute Workflow.
+
+Go back here.
+
+Press Send to n8n.
+
+“Hello. Two plus two is four. How can I help you today?”
+
+Fabulous.
+
+So there you have it.
+
+We now have a working audio app.
+
+It was a little bit of work, but it was great for you to see this, just as I promised.
+
+You can see that n8n is in control. You’ve got the full workflow:
+
+A webhook where the audio is posted in from our web page
+
+An API call to 11 Labs that transcribes the audio to text
+
+That text goes through our AI agent (this time using Gemini)
+
+Gemini produces a response
+
+That response is converted back into speech
+
+The final node ensures the webhook response is an audio file
+
+That’s why the web page receives audio back as the response.
+
+Congratulations 🎉
+
+You’ve just made your first audio voice agent.
+
+I call it an audio voice agent. There are other kinds of voice agents, but this is a voice agent.
+
+Now your mission is to experiment with this.
+
+Obviously, I didn’t add memory here, because we don’t yet have something like a chat history ID. You’d have to work around that a bit.
+
+But do it. Give it memory. Maybe even give it a tool or two. You’re already a pro with tools.
+
+Then have a real conversation through this web page.
+
+The idea here is that this simple web page we set up—this kind of “fake” web page—could be anything.
+
+You could embed this in a WordPress site. You could make it fancier. ChatGPT would have an even easier time making it look prettier.
+
+And you could turn it into something that lets users speak directly to your end-to-end workflow.
+
+This is great experience.
+
+Of course, it’s not the way I ultimately recommend doing it, which is what we’re going to look at next.
+
+But it is a very good way to understand APIs in action.
+
+And if you had a bigger workflow with lots of other steps, and at some point you wanted to add an audio interaction, this is exactly how you would do it.
+
+Okay, so that wraps up technique approach number one.
+
+Approach number two, as I said, is more complicated in some ways—but also simpler and quicker for us now that we’ve built this.
+
+So let’s put this one to bed and dive into approach number two, where 11 Labs calls the shots.
+
+# **I) Day 2 - How to Connect ElevenLabs AI Voice Agent to n8n Workflow with Webhooks**
+
+Okay, so the first thing we do is click to rename the existing workflow. We give the old one a clear name, something like “N8N Orchestrates”, save it, and then go back again to the workflows list. After that, we create a brand-new workflow. This new workflow is going to be the one we actually use going forward.
+
+Once the new workflow is created, we start thinking about how it should begin. The first question is always: what’s the trigger? In this case, the trigger is very clear. We want this workflow to be invoked externally by ElevenLabs, so the trigger must be a Webhook. Since ElevenLabs will be pushing data into N8N, the webhook method should be POST. This webhook becomes the starting point of the workflow.
+
+After setting up the webhook trigger, we decide what should happen next. The webhook input should go into an AI Agent node. We add an AI Agent and acknowledge upfront that it won’t fully work yet — that’s fine, we’ll configure it properly in a moment. For the chat model, we choose Gemini, and specifically we want to use the latest version available. In this case, that’s Gemini 3 Flash Preview, which we manually type in as models/gemini-3-flash-preview since it may not appear in the dropdown.
+
+We don’t add memory to this agent, because this is not meant to be a conversational chat assistant. It’s an action-oriented agent that receives a question, performs a task, and returns an answer. The next decision is what action we want the agent to perform. To keep things simple and avoid introducing new integrations, we decide to use a familiar tool: Google Sheets.
+
+We configure the Google Sheets tool to work with our existing stock portfolio sheet. This workflow will allow the agent to answer questions about how much of a particular stock the user owns. To make this clear to the AI, we manually set the tool description and write something like: “Use this tool to retrieve the equity portfolio of the user to answer questions about their holdings.” This helps the LLM understand exactly when and why it should use this tool.
+
+Before wiring this up to ElevenLabs, we want to test the workflow locally. To do that, we temporarily add another trigger: When Chat Message Is Received. N8N allows multiple triggers, so this is fine. We connect this chat trigger to the same AI Agent node and temporarily add Simple Memory, just to make testing smoother.
+
+We then open the chat and send a test message like, “Hi there.” The agent responds correctly. Next, we ask a real test question such as, “How many SPY do I hold?” The workflow runs, the Google Sheets tool is used, and the agent responds with something like, “I currently hold two shares of SPY.” This confirms that everything is working exactly as expected.
+
+Once we’ve validated that the logic is correct, we clean things up. We delete the temporary chat trigger and remove the memory from the agent, since neither is needed in production. Then we re-enable the webhook trigger by turning it back on. At this point, the workflow is almost ready.
+
+There’s one final piece we need to add on the N8N side. Because this workflow is triggered by a webhook, it must explicitly send a response back. To do that, we add a Respond to Webhook node. We configure it to respond with the first incoming item, which will contain the AI agent’s output. This ensures that ElevenLabs receives a proper JSON response like “You currently hold two shares of SPY.”
+
+Now that the N8N workflow is complete, we move over to ElevenLabs. We go to the Developers section and then into the Agents area. Here, we create a new agent using the Blank Agent option and give it a name, such as N8N Agent. For the system prompt, we keep it simple with something like, “You are a helpful assistant.” We then choose a voice — this time, instead of using Jason or Eric, we select Russell.
+
+Next comes the most important part on the ElevenLabs side: tools. We go to the Tools section and click Add Tool, choosing Webhook as the tool type. This tool will allow the ElevenLabs agent to call our N8N workflow.
+
+We give the tool a clear function-style name with no spaces, such as equity_portfolio_question_tool. In the tool description, we explain to the language model when it should use this tool. For example: “Use this tool to ask any question about the user’s equity portfolio to a specialist assistant who can answer.”
+
+We then configure the webhook details. The HTTP method is POST, and for the URL, we go back to N8N, copy the webhook test URL from the webhook trigger node, and paste it here. We increase the timeout to 60 seconds, since this is an AI-driven request and could take a bit longer. We also enable pre-tool speech so the agent says something while the tool is running, avoiding awkward silence.
+
+Because this is a POST request, we define the request body schema. We describe what information is being sent to N8N. We explain that the body contains the question to ask the equity portfolio specialist. We define a single field named question, set its type to string, and describe it as: “The specific question about the user’s equity portfolio for the specialist to answer.” This allows the LLM to correctly populate the request body when it decides to call the tool.
+
+With that, we add the tool. Now everything is connected. The ElevenLabs agent understands when to use the webhook tool, knows how to structure the request, and knows where to send it. On the other side, N8N receives the request, processes it through the AI agent and Google Sheets, and responds with a structured answer.
+
+At this point, the entire system is ready. ElevenLabs handles the voice interaction, N8N orchestrates the logic and data access, and the webhook connects the two seamlessly. We’re fully set up and ready to roll
+
+# **J) Day 2 - How to Connect ElevenLabs AI Voice Agent to n8n Using Webhooks**
+
+At this point, we already expect that the workflow will initially fail. That’s completely fine and actually part of the plan. The reason we expect an error is because we haven’t yet configured the chat input mapping correctly inside N8N. Even so, we should be able to confirm that the webhook is being called and see exactly where things break.
+
+We go back into N8N and make sure the workflow is active. We click Execute Workflow, which puts the webhook into a listening state. This is important because N8N only receives test webhook calls while it is actively running. With the workflow waiting, we move back over to ElevenLabs.
+
+In ElevenLabs, we return to our agent — the one we just configured with the webhook tool. We click Preview to start interacting with it. The agent comes online and greets us. We then ask a real question, something like:
+“How many shares of SPY do I have in my portfolio?”
+
+The agent attempts to answer but fails gracefully. It responds with something like:
+“I’m sorry, I was unable to retrieve the number of SPY shares you hold.”
+This confirms exactly what we expected: the tool was invoked, but something went wrong downstream.
+
+Now we switch back to N8N to inspect what actually happened. Right away, we see that the webhook was successfully called. Even if we weren’t watching in real time, the execution history clearly shows an incoming request. That’s great news — it means ElevenLabs is correctly calling N8N.
+
+The problem becomes obvious once we inspect the webhook input. The workflow was still configured as if the input were coming from a chat trigger, but it isn’t. Instead, this input is coming from a POST webhook request. Inside that request body, we can see a field called question, and it contains exactly what we asked in ElevenLabs:
+“How many shares of SPY do I have in my portfolio?”
+
+This is important because it proves that the schema we defined in ElevenLabs worked exactly as intended. We told the LLM to populate a question field, and that’s precisely what it did.
+
+To fix the issue, we open the AI Agent node in N8N. Where it previously assumed a chat-based input, we now change it to Define Below. This allows us to explicitly tell the agent where to find its input text. We drag the value from the webhook payload and map it properly.
+
+The expression we use is simple and predictable:
+{{$json.body.question}}
+
+This tells the agent to extract the question from the body of the incoming webhook request. Once this is set, the agent now knows exactly what text it should process.
+
+We save the changes, go back to the workflow canvas, and once again click Execute Workflow so N8N is listening. Then we return to ElevenLabs and press Preview again.
+
+This time, when we ask:
+“How many shares of SPY do I have in my portfolio?”
+the agent responds smoothly. It may say something like:
+“Let me check your portfolio for you.”
+A moment later, it replies:
+“You have two shares of SPY in your portfolio.”
+
+Success. The full round trip works end to end.
+
+At this point, everything is functioning correctly, even though there is still some latency. Compared to the first approach, however, this setup is noticeably faster and more responsive. Despite initially calling this the “more complicated” approach, it actually turned out to be cleaner and simpler once everything was wired together.
+
+If we look at the N8N execution history, we can see all the green checkmarks. The webhook was triggered by ElevenLabs, the AI agent ran successfully, the Google Sheets tool was used, and the Respond to Webhook node sent the output back correctly.
+
+Now it’s worth revisiting what actually happened behind the scenes, because while the build was simple, there are a lot of moving parts conceptually.
+
+The journey starts in ElevenLabs, where we created a voice agent (Russell) and gave it a webhook tool. This tool allows the agent to call out to an external system — in this case, N8N. We configured the tool to use a POST request, which allows us to send structured JSON data.
+
+We explicitly described to the LLM that it must include a question field in the request body. When the user spoke, the agent correctly filled in that field with the user’s question and sent it to N8N.
+
+N8N received the webhook call at the exact URL we configured. Instead of expecting chat input, it parsed raw JSON. The extracted question was passed to Gemini, which then used a Google Sheets tool to look up the portfolio data. The result was then passed to a Respond to Webhook node, which sent the answer back to ElevenLabs.
+
+Back in ElevenLabs, Russell received the response from the tool and spoke the answer to the user. That completes the full loop.
+
+One important limitation becomes obvious at this stage. When using the test webhook, N8N can only process one execution at a time. That means follow-up questions often fail. The solution is to move to production mode.
+
+To do that, we go back to N8N and publish the workflow. This generates a production webhook URL. We copy that URL, return to ElevenLabs, open the webhook tool configuration, replace the test URL with the production URL, and press Save (this step is very easy to forget).
+
+Next, we publish the ElevenLabs agent as well and generate a shareable public link. Now both systems are live in production.
+
+We open the shareable link in a new browser tab and begin testing again. The agent answers our first question correctly. Then we ask a follow-up question like:
+“What other stocks do I have besides SPY?”
+
+This time, it works perfectly. The agent queries N8N again, retrieves additional portfolio information, and responds with a list of other holdings. Multiple turns now work smoothly, end to end, in production.
+
+At this point, everything is running exactly as intended. We have a fully deployed, interactive voice agent with relatively low latency, combining the strengths of ElevenLabs for voice and N8N for orchestration and business logic.
+
+The key takeaway is this:
+The best way to integrate ElevenLabs with N8N is to let ElevenLabs be in charge.
+ElevenLabs handles voice, conversation flow, and tool selection. N8N acts as the backend brain — executing workflows, calling APIs, querying data, and returning structured results.
+
+Yes, the setup is a bit fiddly at times, especially around webhook schemas and request bodies. But this is boilerplate work, and tools like ChatGPT are excellent at helping generate and debug these configurations.
+
+What matters most is understanding the architecture and building blocks. Once you grasp those, everything else becomes much easier.
+
+And with that, this completes Week 2, Day 2: Integrating ElevenLabs with N8N.
+You’re now past the halfway mark — about 47% complete — and ready to move on to an entirely new topic next.
+
+# **K) Day 3 - What is RAG in AI: Retrieval-Augmented Generation Explained**
+
+Okay everyone, today is a purple day, which means it’s a core learning day. That also means there’s a lot of foundational material to get through. Some of you may have noticed that yesterday was actually a yellow day, but the slides accidentally had a purple strip on the front and back instead of yellow. I realized this only at the end, and for a moment I considered rerecording the whole thing. But then I figured I’m probably the only person who notices or cares about the color of that strip. Still, if you did notice and it bothered you, my apologies. I won’t make that mistake again—and today really is a purple day.
+
+Since it’s a core day, we’re diving into something important. Today I’m going to demystify and fully explain one of the hottest topics in generative AI: RAG — Retrieval Augmented Generation, along with the newer, juicier twist on it. If you already know RAG well, feel free to put this on 2× speed and breeze through it. But for many of you, this will be genuinely interesting.
+
+This is a technical topic, but I’m deliberately not going deep into the technical weeds. Instead, I’ll give you enough intuition so that you understand how and why it works, and—most importantly—how to apply it to get better commercial outcomes. Before we get there, though, we need a quick recap of something fundamental: APIs.
+
+Last time, we spent a lot of time clarifying API terminology, and I warned you that I’d probably revisit it a few times. This is one of those times. When people say they’re “calling an API,” what they usually mean—especially in the context of web APIs—is that they’re making an HTTP request. The URL they send that request to is called an endpoint. So when someone says, “I’m making an API call,” they’re really saying, “I’m making an HTTP request to an endpoint at a specific URL.”
+
+Then there’s the concept of a webhook, which is essentially the opposite direction. If you’re on the receiving end and you expose a URL that others can call to notify you that something has happened, that URL is a webhook. Some people even call webhooks “reverse APIs” because instead of you calling out, someone else calls into you. You might say, “Here’s my webhook—call this URL when this event occurs.” That’s what a webhook is.
+
+We also talked about HTTP methods. The most common ones are GET and POST, although others exist. Typically, GET is used when you’re fetching information and expecting JSON back, while POST is used when you’re sending information. One important detail we discovered yesterday is that POST requests can include a body, often containing JSON.
+
+This becomes especially relevant when large language models are involved. Yesterday, we gave an LLM in ElevenLabs a tool that allowed it to make an HTTP POST request to a webhook. That POST request included a JSON body containing a question. N8N received the webhook, extracted the question, passed it to another LLM, optionally used a tool, and then sent the answer back. That entire flow is a real, practical example of APIs and webhooks working together.
+
+Hopefully, that recap gives you a solid mental model of endpoints, webhooks, methods, and how they all fit together. With that groundwork laid, we can now completely change topics and start fresh.
+
+New blank sheet of paper.
+
+Let’s talk about RAG.
+
+RAG became massively popular a couple of years ago, and the core idea behind it is unbelievably simple—so simple that you’ve probably thought of it yourself if you didn’t already know the term. The motivation was this: people wanted LLMs to have deep expertise in specific commercial or domain-specific areas. Traditionally, the way to do that was to train or fine-tune models with domain-specific data, which is expensive, time-consuming, and data-hungry.
+
+Then a complementary idea emerged. Instead of retraining the model, why not just give it the extra knowledge at runtime? This approach is much cheaper, much faster, and easier to implement. It may be a little less powerful than full training, but it’s often “good enough”—and sometimes excellent. This idea became known as Retrieval Augmented Generation.
+
+At its core, RAG is simply about making LLMs appear more knowledgeable by giving them more context. In the most blunt terms possible, RAG is about stuffing extra information into the prompt. When you phrase it like that, it almost sounds trivial. But there’s a collection of techniques and best practices around doing this well, which is why it became such a big deal.
+
+RAG stands for “retrieval augmented generation,” which is a lot of words for something fairly straightforward. It’s a clever hack that happens to work extremely well. I often describe RAG as a “big old hack”—not because it’s bad, but because it’s pragmatic. There’s an entire cottage industry of techniques built around it, many with long, impressive names. But underneath, it’s trial-and-error engineering that delivers strong results.
+
+I like to explain RAG using two ideas: a small idea and a big idea.
+
+The small idea is simply this: can we make an LLM more knowledgeable just by adding relevant information to the prompt? Imagine you’re a travel airline answering customer questions. If someone asks, “How much does it cost to travel to Paris?”, you could include the question in the prompt along with background information like ticket prices, travel rules, or seasonal discounts. LLMs are very good at using this additional context when predicting the next tokens, so the answer will naturally align with the information you provided.
+
+You can try this yourself in ChatGPT. Ask a question, then add extra context like pricing details or policies, and you’ll see how much better the answer becomes. This is not surprising—if the information is in the prompt, the model will use it.
+
+The obvious problem with this approach is scale. If you’re a travel company with ticket prices for every city in the world, you can’t shove all that data into the prompt. Even if you technically could, it would be full of irrelevant information, making the model’s job harder, not easier. You’d be overwhelming the LLM with a massive essay when all you really need is one small, relevant snippet.
+
+That’s where the big idea of RAG comes in. Instead of sending all your data, can you select a relevant subset of information that’s most likely to help answer the question? It doesn’t have to be perfect. Maybe only a third of the information you send is actually useful—but that’s still far better than sending nothing or sending everything.
+
+This selective retrieval is the heart of RAG. It’s a balancing act: too little information and the model lacks context; too much and you overwhelm it. Tuning this balance—how much data to retrieve, how relevant it is, and how it’s structured—is what separates basic RAG from excellent RAG.
+
+The final and most powerful idea behind RAG is this: you can actually use an LLM to help decide what information is relevant. You don’t necessarily need to use the same LLM that answers the final question. You can use another model upstream to figure out which chunks of data are most likely to help answer a question like “How much does a ticket to London cost?” and retrieve just those pieces.
+
+That’s the core intuition behind RAG. A simple idea, scaled with smart retrieval, that turns general-purpose LLMs into domain experts—without retraining them.
+
+And that’s why RAG became such a big deal.
+
+# **L) Day 3 - How Embedding Models Enable Semantic Search in RAG Systems**
+
+To make the idea behind RAG (Retrieval-Augmented Generation) more concrete, let’s walk through a simple diagram in words. The core idea is about giving an LLM extra knowledge by injecting relevant information directly into the prompt before it answers a question.
+
+Imagine we are in a chat application. A user asks a question—say, “What is the ticket price to London?” This question comes into some system, maybe built using a low-code platform like N8N or a custom code setup, whose job is to figure out how to answer the question using an LLM.
+
+Before sending the question to the LLM, the system first checks whether it already has useful information stored somewhere. This storage is usually called a knowledge base—essentially a database filled with relevant documents, facts, or reference material. You might remember this term from earlier examples, such as when working with tools like ElevenLabs.
+
+A very simple approach would be to scan the knowledge base for the word “London.” If the system finds documents mentioning London, it collects all of that information and adds it to the prompt. The final prompt sent to the LLM might look like this: “The user is asking about ticket prices to London. Here is some additional information that may help.” Then all the retrieved London-related content is appended.
+
+The LLM then does what it always does: it predicts the next tokens based on the provided context. Because the prompt now contains both the question and relevant background information, the model is more likely to produce a correct and helpful answer about ticket prices to London.
+
+However, this approach has a serious weakness. Suppose the user doesn’t mention London directly. Instead, they ask something like “How much does it cost to go to Heathrow Airport?” Heathrow is one of the major airports in London, but if the word “Heathrow” doesn’t appear in the knowledge base—or if the system is only searching for the word “London”—then nothing relevant is retrieved. As a result, the LLM has no helpful context and may fail to answer properly.
+
+This makes the approach very brittle. It depends heavily on exact word matches and on whatever retrieval logic the developer has written. While the idea of adding knowledge to the prompt is good, the execution becomes clunky and unreliable when based purely on keyword matching.
+
+The real breakthrough comes from figuring out how to do a fuzzy lookup in the knowledge base—one that doesn’t rely on exact words but instead looks for similar meaning. This is often called semantic search. The goal is to retrieve information that is conceptually related to the user’s question, even if the wording is different.
+
+To understand how this works, we need to take a short detour and talk about embedding models.
+
+An embedding model is a special type of language model. If this starts to sound overly technical, it’s worth emphasizing that this is extremely important in real-world, commercial AI systems. Almost any serious agent or RAG system uses embeddings because they allow you to move faster and leverage stored expertise effectively.
+
+Unlike typical LLMs—which take text as input and predict what text comes next—an embedding model has a different job. It takes text as input and outputs a list of numbers. These numbers represent the meaning of the text rather than the next words to generate.
+
+Embedding models are also known by other names: encoders, embedding models, vector embedding models, or embedders. All of these terms refer to the same concept. While text is still tokenized internally like any other model, the output is not tokens—it’s a numerical representation of meaning.
+
+This list of numbers is called a vector. To make this easier to visualize, imagine the model outputs just three numbers. Those three numbers could be treated like X, Y, and Z coordinates, representing a point in 3-dimensional space. In reality, embedding models usually output hundreds or thousands of numbers—often around a thousand—so you can think of each embedding as a point in a thousand-dimensional space.
+
+While that sounds very sci-fi, the idea itself is simple: it’s just a long list of numbers that captures the meaning of the text. If there were only three numbers, it would be easy to draw. With a thousand numbers, it’s harder to visualize, but mathematically it works the same way.
+
+Now here’s why this matters. If you pass two pieces of text with similar meanings into an embedding model, the resulting vectors will be close to each other in this space. In other words, text that means similar things ends up represented by similar numbers.
+
+For simplicity, imagine everything lives in 3-dimensional space. Each paragraph of text becomes a point. The closer two points are, the more similar their meanings are. Technically, this similarity is calculated using something called cosine similarity, but you don’t need to worry about that detail right now. The key idea is that closeness equals similarity.
+
+This same principle applies in high-dimensional space as well. Whether it’s 3 dimensions or 1,000 dimensions, we can compute how similar two vectors are and therefore how similar the meanings of their original texts are.
+
+Crucially, this similarity is not about shared words. For example, “How much does it cost to go to London?” and “What is the ticket price to Heathrow?” use very different wording, but they express essentially the same idea. A well-trained embedding model recognizes this and places their vectors close together in space.
+
+Embedding models are good at this because they are trained on massive amounts of data using sophisticated techniques that teach them which pieces of text are related in meaning. Over time, they learn how to map similar concepts to nearby points in vector space.
+
+At this stage, we can simply accept this as a given: embedding models exist, they turn text into vectors, and the distance between vectors tells us how similar the meanings are.
+
+So what does this allow us to do?
+
+It enables semantic search—a fuzzy, meaning-based search across large datasets. Instead of scanning for exact words, we embed both the user’s question and all the documents in our knowledge base. Then we look for the documents whose vectors are closest to the question’s vector.
+
+This is incredibly powerful. When someone asks “How much is the ticket price to London?”, the system can retrieve information about travel costs, Heathrow flights, or related pricing data—even if none of those documents use the exact same words.
+
+That retrieved information is then added to the prompt, and the LLM uses it to generate a much more accurate and grounded answer. This is the big idea behind RAG: combining semantic search using embeddings with generative language models to produce better, more reliable responses.
+
+# **M) Day 3 - How RAG Works: Vector Databases and Semantic Search Explained**
+
+This is the moment where everything comes together. At this point, a new mental diagram should form, and hopefully the entire idea behind RAG finally clicks into place.
+
+We start again with a user chatting with our system. The user asks a question—something like, “How much does it cost to travel to Heathrow?” This question comes into our application, whether it’s custom software or a low-code platform like N8N. On its own, this question is not going to directly match anything in our database using simple keyword search.
+
+So what do we do next?
+
+The very first step is to take the user’s question and send it to an embedding model. We ask the embedding model to turn this question into a set of numbers—a vector. You’ll often hear this described as vectorizing the question, which again sounds very sci-fi, but really just means converting text into a numerical representation of its meaning.
+
+Once we have a vector for the question, we then look into our database to find relevant information. But here’s the key difference from before: everything in our database has already been turned into vectors as well. Every document, paragraph, or chunk of knowledge has its own vector representation.
+
+Now we can ask a much smarter question: Which vectors in our database are closest to the vector for “How much does it cost to go to Heathrow?” Closeness here means similarity in meaning. The information we retrieve might not be perfect—it could include things related to Heathrow that aren’t about ticket prices—but overall, it’s very likely to surface relevant data.
+
+Typically, we take the top few closest results—maybe the ten nearest vectors or everything within a certain similarity threshold. Once we’ve identified those vectors, we do something important: we ignore the vectors themselves and go back to the original text that produced them.
+
+We collect that original text—the actual human-readable content—and combine it together. Then we construct a prompt that says something like: “The user is asking how much it costs to go to Heathrow. Here is some content that may be relevant.” After that, we paste in all the retrieved text.
+
+This prompt is then sent to the LLM. The LLM generates an answer, and because it now has high-quality, relevant context, the answer is likely to be correct. At that point, you’re happy—and that is the core idea behind RAG.
+
+Hopefully, by now, RAG feels much less mysterious. You don’t need to know every low-level detail, but having a solid mental model of how the pieces connect is extremely valuable.
+
+One additional clarification is worth making. The database at the bottom of this diagram—if it supports storing vectors and efficiently querying for similar vectors—is often called a vector database. In the past, only a few specialized databases were built for this purpose. Today, vector search has become so popular that most mainstream databases support it.
+
+Databases like PostgreSQL and MongoDB now allow you to store vectors and perform vector similarity queries. So you don’t necessarily need a niche or exotic system anymore—many existing databases can do this out of the box.
+
+Another common source of confusion is the role of vectors in the final prompt. Some people think that the prompt sent to the LLM contains vectors—like numbers representing ticket prices, plus numbers representing similar data. That is not the case.
+
+The LLM on the right side of the diagram knows nothing about vectors. It does not understand embeddings or cosine similarity. All it wants is text so it can predict the next tokens. The embedding model and the vector search logic exist entirely outside of the LLM’s awareness.
+
+The embedding model’s only job is to help select relevant context through fuzzy, semantic search. Once that selection is done, vectors are completely forgotten. What gets sent to the LLM is plain text—actual content that helps answer the question.
+
+The embedding model and the LLM do not even need to come from the same provider. They could both be from Google, or they could be from completely different companies. They serve different purposes and don’t interact directly with each other.
+
+So that’s the complete picture of RAG.
+
+What makes this so powerful is that it creates the illusion of a model that knows an enormous amount of information—potentially everything about your company. In reality, the model is simply very good at retrieving the right information at the right time.
+
+This is why RAG is such a strong business solution. Any time you want an expert knowledge worker—someone who knows all your products, all your internal documentation, all your policies, or all your employee information—RAG is the go-to technique.
+
+For example, HR systems that need to understand company policies and employee data often use RAG. Internal support bots, documentation assistants, and enterprise knowledge workers are all classic RAG use cases. Anywhere you need fast, contextual expertise, RAG fits naturally.
+
+There are also many extensions and variations of RAG. You might hear about graph RAG, hierarchical RAG, reranking, and many other techniques. The ecosystem around RAG is large and growing quickly.
+
+One particularly important point is that RAG is very experimental and hacky by nature. The single most important thing when working with RAG is measurement—measuring retrieval quality, measuring response quality, and evaluating whether changes actually improve results. Without measurement, it’s impossible to know whether one approach is better than another.
+
+If this topic really grabs you, entire courses and weeks of study are dedicated to RAG, including evaluation and optimization. But for now, it’s time to move forward.
+
+Next, the focus shifts to agentic RAG, a newer and very hot topic. To understand it properly, the next step is to compare traditional RAG—the original approach—with agentic RAG and see what makes it different.
+
+# **N) Day 3 - Agentic RAG vs Traditional RAG: Building Smarter AI Retrieval Systems**
+
+It probably won’t come as any surprise to you that the next step after traditional RAG feels very obvious. In traditional RAG, we understand the process clearly. A user chats with us, their message goes through vector-based retrieval, and our code performs a semantic search using vector similarity. That retrieved context is then sent to an LLM, which uses the additional context to generate a response. That entire flow—user message, retrieval, response—is what we call traditional RAG.
+
+However, when you think about introducing agents into this world, the linear nature of traditional RAG starts to feel a bit limiting. It feels like a fixed pipeline: you write the code, it always performs vector retrieval in the same way, and then it sends the result to the LLM. But RAG, by its nature, often works better when it is more iterative, more interactive, and more adaptive.
+
+This is where the agentic twist comes in.
+
+With agentic RAG, the user still starts by sending a message, just as before. But instead of that message going directly into a vector-based retrieval step, it first goes to an agent. When we say “agent,” what we really mean is an LLM that is responsible not just for answering the question, but also for deciding how to answer it. The LLM now controls the workflow: figuring out what to do next, which tools to use, and how best to find the information needed to respond.
+
+One of the tools we give this agent is access to vector-based retrieval. The agent can query a vector database whenever it wants. It might try one retrieval approach, then try another variation, experimenting with different RAG techniques to find better or more relevant context. We can also give it access to other tools.
+
+For example, we might give the agent direct SQL access. If the agent realizes that there’s a structured table—say, a ticket prices table with columns for city or destination—it may decide that vector search is unnecessary. Instead, it could write a SQL query like “select ticket prices where city equals London,” execute that query, and retrieve the data in a more traditional way.
+
+The key idea is that the LLM is now in control. It decides whether to use vector search, SQL, or some other retrieval strategy. It can combine results, iterate, and refine its approach. Once it has gathered the best possible context, that same LLM can then generate the final answer to the user.
+
+There are, of course, other architectural options. You could have one agent whose sole job is retrieval and another LLM that only focuses on answering the question. That separation of responsibilities is perfectly valid. But in its simplest form, agentic RAG is just a contrast between two approaches: traditional RAG as a linear workflow, and agentic RAG as a flexible, iterative process driven by an LLM.
+
+And there’s no prize for guessing which one we’re going to build. Yes—we’re going to build agentic RAG.
+
+Today was very much a core expertise day. It may have felt theory-heavy, but the goal was to make it applied, practical theory—ideas you can actually use in real systems. To make things more concrete, and not just about slides, it’s time to talk about Supabase.
+
+N8N already comes with built-in database capabilities and some support for vector databases. However, for this project and this week’s work with data, databases, and vector storage, the decision is to use a third-party database that’s extremely popular among agencies, startups, and mid-sized companies. That database is Supabase.
+
+Supabase is widely used and very well regarded, which makes it a great tool to learn. Unsurprisingly, N8N has a Supabase node—it really had to, given how popular Supabase is.
+
+So what exactly is Supabase? At its core, Supabase is a managed, cloud-hosted version of PostgreSQL. PostgreSQL is one of the most popular relational databases in the world, and Supabase makes it incredibly easy to set up and use. It’s very user-friendly, very startup-friendly, and ideal for quickly building real products.
+
+The recommendation is for you to visit the Supabase website and spend some time exploring it. It offers a generous free tier, which is essential for this course. You’ll see that Supabase provides several services, but the PostgreSQL database is the main one we care about.
+
+You’ll also notice that Supabase supports storing vector embeddings—that is, vectors generated by embedding models. This is exactly what we need for building an agentic RAG system. It’s the right kind of database for this project.
+
+Your homework is to explore Supabase, set up an account, read through some of the documentation, and get comfortable with the interface. Check out the pricing page so you understand what the free plan includes versus the paid plans. The free tier includes things like unlimited API requests and up to 50,000 monthly active users—which is far more than we’ll need for this week’s project.
+
+There’s no need to upgrade to a paid plan for this course. The free tier is more than sufficient.
+
+When you set up your Supabase account, you’ll be asked to name your organization. A good approach is to name it something personal, like your name followed by “research,” “education,” or something similar. This reinforces the idea that this is your personal sandbox for learning and experimentation, not a corporate environment.
+
+Depending on your region, the signup flow may look slightly different, but overall it’s very straightforward. If you run into any issues, you can message me or check the course resources in case there are additional notes there.
+
+Looking ahead, the next two days are where things really come together. We’ll be building a RAG pipeline with a voice agent. The goal is to create an expert voice agent that can accelerate a business by handling large volumes of questions about a company, scaling knowledge delivery, and streamlining operations.
+
+This kind of agent acts like a knowledgeable expert with full access to everything about your company. We’ll build this step by step, but in a way that leaves you with a foundation you can expand—either for your own company or as a commercial product you offer to others.
+
+Tomorrow, we’ll start by integrating Supabase for the first time. We’ll take data, turn it into vectors, and store it in Supabase. This will focus on data ingestion and building automated pipelines.
+
+Finally, we’ll wrap up the week by building the expert voice agent itself. Just like what we did previously, the voice agent will call a webhook running in N8N, which will execute a workflow to answer expert-level questions using RAG.
+
+That’s what’s ahead. Hopefully you’re excited—I certainly am. And with that, you’re officially over halfway through the program: 53% complete. You’re well on your way to becoming an N8N Pro.
