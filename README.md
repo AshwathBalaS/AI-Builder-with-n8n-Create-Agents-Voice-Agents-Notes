@@ -91,6 +91,18 @@ This Repository contains my "AI Builder with n8n: Create Agents &amp; Voice Agen
 
 **N) Day 3 - Agentic RAG vs Traditional RAG: Building Smarter AI Retrieval Systems**
 
+**O) Day 4 - Building RAG Pipelines with Supabase Vector Database and Embeddings**
+
+**P) Day 4 - How to Use n8n and Supabase Integration for AI-Powered RAG System**
+
+**Q) Day 4 - Building RAG Pipeline with n8n and Supabase Vector Store Setup**
+
+**R) Day 4 - How to Set Up Supabase Vector Database for RAG with n8n**
+
+**S) Day 4 - Supabase Vector Store Integration with n8n Using OpenAI Embeddings**
+
+**T) Day 4 - Build a RAG Pipeline Using n8n and Supabase Vector Database**
+
 
 
 # **I) Week 1 - Automate with Workflows in n8n Cloud**
@@ -3221,3 +3233,546 @@ Tomorrow, we’ll start by integrating Supabase for the first time. We’ll take
 Finally, we’ll wrap up the week by building the expert voice agent itself. Just like what we did previously, the voice agent will call a webhook running in N8N, which will execute a workflow to answer expert-level questions using RAG.
 
 That’s what’s ahead. Hopefully you’re excited—I certainly am. And with that, you’re officially over halfway through the program: 53% complete. You’re well on your way to becoming an N8N Pro.
+
+# **O) Day 4 - Building RAG Pipelines with Supabase Vector Database and Embeddings**
+
+It is week two, day four. This marks the start of a two-day series in which we wrap up week two, and together these two days will have that familiar combination of being both challenging and satisfying.
+
+As you will see, it is, of course, a yellow day. It’s a yellow day because we’re doing integrations—specifically Supabase—which you already had your first look at. Hopefully, you logged in, clicked around, set up your organization, completed some of the initial setup, and got a general sense of what we’re talking about.
+
+But first, as usual, we have some recapping to do. I want to start with a quick refresher on RAG, because the next couple of days are all about building RAG ourselves—for real.
+
+At its core, RAG is about making your model appear to be more knowledgeable. RAG stands for Retrieval-Augmented Generation, and it’s a technique that works extremely well. The simplest version of RAG is just taking some information and shoving it into the prompt. A user asks a question, and you provide the model with some information that might pertain to that question.
+
+The clever part of RAG is how we figure out which information to include in the prompt. This is where vector embeddings come in. The idea is that there are certain types of LLMs that are very good at taking text and producing a set of numbers that represent the meaning of that text. These numbers can then be used to find similar information.
+
+This gives us a way to search through a knowledge base for content that is likely to be useful in answering a particular question. At the heart of this idea is a type of LLM you may not even have known about: the embedding model, also known as an encoder or embedding LLM.
+
+An embedding model takes text as input and outputs a list of numbers, called vectors or vector embeddings. These numbers represent the meaning of the input text. You can think of this as a point in space. If it were three numbers, it would be a point in three-dimensional space. If it’s a thousand numbers, it’s a point in a thousand-dimensional space.
+
+The key idea is that text with similar meanings ends up close together in this space. That allows us to search for relevant contextual information in our knowledge base—information that has a similar meaning or pertains to the same topic as the user’s question.
+
+You’ve seen this diagram before, and if you’ve taken my other courses, you’ve probably seen it many times. I know some of you are thinking, “Oh no, not this diagram again.” I’m sorry—I like this diagram.
+
+The flow works like this: the user asks a question, and that question comes into our code or workflow. We then generate the vector embedding for the question. For example, if the question is “How much does it cost to fly to Heathrow?”, we convert that question into a vector.
+
+Next, we look at our database, which already contains vectors for all of our stored information. We retrieve the pieces of information whose vectors are closest to the vector for the question. If the question is about flying to Heathrow, then content about ticket prices to London should ideally be retrieved.
+
+Importantly, we don’t retrieve the vectors themselves—we retrieve the original text associated with them. That text is what we place into the prompt. We say to the LLM: “The user asked this question. Here is some relevant context.” That context might include ticket prices to London.
+
+The LLM is then able to connect the dots. Given the question and the relevant context, it predicts the most likely next tokens, which form the answer. That is RAG.
+
+When I do these recaps, I like to add a little extra detail to spice things up. One challenge that often comes up when building vector databases is deciding how to represent documents. Should you create one vector for an entire document? Or should you break it up?
+
+If a document contains multiple topics—say, ticket prices to different destinations—it often makes sense to break it into smaller pieces. Each paragraph or section can become a mini-document with its own vector. That way, only the most relevant chunks get retrieved.
+
+This process is called chunking. You’re turning a document into chunks. There’s an entire cottage industry around chunking strategies, and people get very passionate about what works best. You’ll hear lots of rules about how you should or shouldn’t chunk.
+
+At the end of the day, there’s only one true principle: you have to test it. You need to try different strategies and see what works best for your data and your questions. In my AI engineering courses, we go deep into this—building testing methodologies and using metrics to evaluate chunking strategies—but that’s more advanced material.
+
+For what we’re doing here, we’ll use default chunking approaches, which often work very well.
+
+Another thing we covered yesterday was RAG versus agentic RAG. Traditional RAG works like this: the user asks a question, we perform vector-based retrieval, we fetch relevant content, and we pass that content to the LLM to generate an answer.
+
+Agentic RAG takes this a step further. The user asks a question to an agent, and that agent is powered by an LLM that manages the entire workflow. The LLM doesn’t just answer the question—it decides how to answer it.
+
+The agent has tools, including vector-based retrieval tools, and it can choose when and how to use them. It may adjust parameters, try multiple retrieval strategies, or even re-run retrieval if the initial context isn’t good enough. This iterative, decision-making process is what makes it agentic.
+
+You may hear people say that RAG is dead. Usually, they say this for one of two reasons. The first is that context windows are getting larger and larger, allowing you to pass huge amounts of information into a model. Some people argue that you could just put your entire knowledge base into the context window and skip RAG altogether.
+
+I think that’s a red herring. In real-world systems, companies often have gigabytes of documents—far more than any context window can handle. Even if you could fit it all, it would be wasteful to include irrelevant information. If the question is about ticket prices to London, there’s no benefit in also including ticket prices for every other city in the world.
+
+The second reason people say RAG is dead is because of agentic RAG. Some argue that traditional RAG will be replaced entirely by agentic RAG. I think that’s probably true—but it’s really just a terminology issue. Agentic RAG is the natural evolution of RAG, not its replacement.
+
+So I say: long live agentic RAG.
+
+There are two distinct phases to building a RAG system. The first is data ingestion. This involves pulling information from source systems—text files, spreadsheets, PDFs—and loading it into a knowledge base or vector store.
+
+You typically start by extracting the data from its source. Then you transform it, often cleaning it up or adding metadata that can be used later for filtering or organization. After that, you perform RAG-specific steps: chunking the data and vectorizing it.
+
+Vectorizing—also called embedding or encoding—means passing the chunks through an embedding model to generate vectors. These vectors, along with the original text and metadata, are then loaded into the vector store.
+
+This process resembles traditional ETL (Extract, Transform, Load) pipelines, with the addition of chunking and vectorization.
+
+The second phase is the RAG pipeline itself—the question-answering flow. A user asks a question, which goes to the agent. The agent vectorizes the question, searches the vector store for similar chunks, retrieves the relevant text, and then passes that context to the LLM.
+
+The LLM uses that context to generate the final answer. That completes the loop, and together, these two phases form a complete RAG system.
+
+# **P) Day 4 - How to Use n8n and Supabase Integration for AI-Powered RAG System**
+
+And with that, it gives me enormous pleasure to introduce you to this week’s business challenge.
+
+This week is all about accelerating your business, or your client’s business. This is such a classic use case—one of those things you can immediately go out and implement for clients in the real world.
+
+The setup is that we need to build an expert that is more than just a chatbot. This has to be something capable of answering detailed, in-depth questions about a client’s business. In this scenario, the client has a large amount of information about a lot of products stored in a big Google Sheet—a huge document—and they want something that can quickly answer questions related to any of that information.
+
+We’ll be working with a fairly big dataset—not massive, but large enough to matter. The idea here is scalability. This solution should work whether you’re dealing with enterprise-level data or a startup’s internal data. It needs to be able to handle huge quantities of information. This is a classic RAG business setup.
+
+For our solution, as I mentioned yesterday, we’re going to be using a managed database provider called Supabase. There are easier ways we could do this. There are built-in databases and nodes that make life much easier, but I’ve intentionally made things a little harder by choosing Supabase.
+
+I did that for a reason. Supabase is very popular, it’s a great third-party database, and it’s something many people use in production. By giving you the skills to integrate with Supabase, it’s a big tick in your integrations list. You’ll have worked with Supabase, set up credentials, and gained experience you can reuse and extend for many other purposes.
+
+Because of that, I felt it was an important infrastructure step. That’s why I picked a slightly harder challenge and decided we would integrate with a Postgres database on Supabase.
+
+There is one downside. At one point, we’ll need to run some code to set up the database. I’ll give you that code, and you’ll execute it in Supabase. You would be completely justified in thinking, “Wait, this is supposed to be a low-code / no-code course. How would I do this myself?”
+
+I’ll talk you through that when we get there. I’m not going to walk through the code line by line, but I will explain how you could generate this yourself, how easy it is, and how you’d handle issues if something goes wrong. That’s just one small obstacle we need to get through.
+
+Apart from that, Supabase is going to be fantastic. It’s very scalable and enterprise-grade, though when I say “heavyweight,” I mean that in the enterprise sense. In practice, it’s actually a lightweight and easy-to-use platform. I think you’re really going to like it.
+
+Today is all about data ingest.
+
+On one hand, I’m going to dive a bit deeper and help you build some core skills. We’ll be doing data transformation using a node called Edit Fields, which used to be called Set. This is such a crucial node, and mastering it is an important foundational skill.
+
+On the other hand, I’m also taking a bit of a shortcut. The source of data we’re going to use is a Google Sheet. We’ve done this a few times already, and you might be thinking, “That’s a bit boring.” I thought the same thing initially.
+
+Originally, I thought it would be really cool if we used a Google Drive folder, where every time a document was dropped in, it would automatically kick off our data ingest pipeline. And that would be cooler. However, there’s a bit of overhead involved—especially around credentials and OAuth 2—which would become a big distraction right now.
+
+We are going to do that next week. We’ll set it up properly so you can absolutely come back and upgrade this workflow. You’ll be able to move from updating a Google Sheet to simply dropping a document into a Google Drive folder and having everything trigger automatically. That will be very cool.
+
+But for now, it would be too much of a detour. It would turn into a one-hour sidebar just to get authentication working, and I’d rather we stay focused on RAG and get a complete system built.
+
+So the shortcut is this: our source data will be a Google Sheet, which we already know how to integrate with. That part will be easy. We’ll spend most of our time focusing on the agentic RAG build-out.
+
+Tomorrow, we’ll add the question-answering part. Yesterday we did data ingest, tomorrow we add QA, and that completes a fully agentic RAG commercial build.
+
+We’re also definitely going to add a voice agent tomorrow. At that point, I think it will really click why I’ve been talking about building business logic in n8n and then using ElevenLabs as the voice agent that drives the workflow. We’re following that second integration approach, where n8n handles the logic and ElevenLabs acts as the voice interface.
+
+Alright—enough talk. Time to do.
+
+Let’s set up our data ingest.
+
+Let me start by introducing you to the data.
+
+This is a Google Sheet that your client has shared with you in this example. It’s a sheet full of products sold in their online store, which specializes in computer accessories. You can see product names, categories, SKUs, prices, and descriptions.
+
+There are quite a few entries. Not a huge number—there are 60 rows—because I don’t want this example to be expensive or overwhelming. But the key point is scalability. This could just as easily be 60,000 rows. Everything we’re building will scale to that level and beyond.
+
+If you want to generate more data or use your own dataset, I would strongly encourage that.
+
+We’re using Google Sheets here because it’s something we’ve already integrated with, making it easy to pull in the data. A more advanced challenge would be to solve the next step—having any document dropped into a shared Google Drive trigger ingestion automatically. That would be great, and you’re welcome to try it later.
+
+But this scenario is very realistic. Clients really do hand over spreadsheets like this and say, “Here’s our data.” So this is what we’re working with, and we’ll get used to it because we’ll be reading it, analyzing it, and transforming it.
+
+Let’s get started.
+
+We go over to n8n and sign in. We enter our workspace and land on the home screen. From there, we create a brand-new workflow.
+
+The first question is: what triggers this workflow?
+
+There are lots of interesting options—when a sheet changes, when a file is dropped into Google Drive—but I’m keeping it simple and triggering it manually. We’ll add more interesting triggers later. For now, the focus is on RAG and the data pipeline.
+
+This workflow will load data from the Google Sheet and put it into Supabase as a vector store.
+
+At this point, I’m rolling up my sleeves because we’re about to get deep into some data—and that’s something I always enjoy, and I think you should too.
+
+We start by adding a Google Sheets node. We want to get rows from the sheet. I’ll configure it to pull in all the rows from the product sheet.
+
+I select the spreadsheet, choose the only sheet—Sheet1—and that’s it.
+
+Now we execute the workflow. With a manual trigger, we just click the Execute Workflow button and let it run.
+
+Once it runs, we can double-click the node and see the output. You’ll see all 60 items loaded in. For example, one row might be the “NovaKey Tactile Keyboard,” complete with its category, SKU, price, and description.
+
+Great. Our data is now loaded.
+
+This is the Extract stage of ETL—Extract, Transform, Load. The next step is Transform.
+
+We now want to massage this data into a format that makes the most sense for our knowledge base.
+
+To do that, we’ll use a node that used to be called Set and is now called Edit Fields. You’ll even see “Set” in brackets because that’s what it used to be named.
+
+On the left, we have the incoming data. On the right, we define what we want the transformed output to look like. This mapping step is where we shape the data into the best possible format for our RAG system.
+
+And that’s what we’re going to do next.
+
+# **Q) Day 4 - Building RAG Pipeline with n8n and Supabase Vector Store Setup**
+
+So here we are in the Edit Fields node.
+
+This is such a core node. This node used to be called the Set node, and this is really where a data engineer lives. This node is all about mapping data from one format to another. It has nothing directly to do with AI—although of course, working with data is fundamental to AI—but it is absolutely crucial for this kind of data engineering work.
+
+You can see that there are some clever, advanced ways to do this using JSON, but we’re going to do manual mapping, which is by far the most common approach. What we’re going to do here is create a dataset with two fields.
+
+The first field will be called content. This is going to contain text that is best suited for our knowledge base—text that can be vectorized and used effectively by a language model. The second field will be called category, which will tell us what kind of thing this record represents.
+
+The reason we’re adding category is because it’s useful metadata. Even though we may not make heavy use of it right now, it’s a great practice to tag data like this. Later, it could be used for filtering or refining results in different ways.
+
+So I press Add Field, and this lets me define new fields. As mentioned, we’re going to add two fields: one called content, and another called category. Every single record coming in from the left-hand side will end up with these two fields built on the right-hand side.
+
+Let’s start with content.
+
+Here, we’re defining what should go into the content field. We also need to choose its type. Is it a string, a number, a boolean, an array, an object, or something else like a file? In our case, it’s going to be a string.
+
+What goes into this string is entirely up to us. This text will eventually be sent to an LLM, so we want it to be as useful and descriptive as possible. We’re essentially turning structured product data into a natural-language description that provides good context.
+
+So we might start with something like:
+Product name:
+
+But we don’t want this to be fixed text—we want it to be an expression. So after “Product name:” we insert the product name dynamically using an expression:
+$json.name
+
+You can see in the result preview below that it evaluates correctly and shows the product name, such as the keyboard.
+
+Next, we add a new line and write Category:. For this, we insert the category using $json.Category, with a capital “C,” because that’s how it appears in the incoming data.
+
+Then we continue. Why not include everything? We add the SKU, using $json.SKU, and then the Price, using $json.Price.
+
+If you look at the result preview, you’ll notice that the price comes through exactly as it appears in the table, without a dollar sign. Since this text is meant for an LLM, it might actually be helpful to include a dollar sign so the model understands this is a monetary value. So we manually add the dollar sign before the price.
+
+Finally—and most importantly—we add the Description. We make sure it’s spelled correctly, and we pull it directly from the input using $json.Description.
+
+At this point, we have a field called content, and you can see exactly what it evaluates to in the preview: a nicely formatted block of text containing the product name, category, SKU, price, and description.
+
+Now, if you’re used to very strict data engineering practices, this might feel a bit janky. We’re essentially crafting a descriptive text block by hand. But this is where data engineering meets data science and AI.
+
+The goal here isn’t just clean structure—it’s usefulness for an LLM. We’re trying to create a string that provides rich, relevant context so that when a question is asked about this product, the model has everything it needs to respond accurately.
+
+There’s no single right or wrong way to do this. You should experiment. Try different formats, different phrasing, and see what produces the best results. Trial and error is the best way to get good outcomes. That said, this is a perfectly reasonable starting point.
+
+Next, we move on to the category field.
+
+This one is simple. We want it to contain the category value from the original data. Again, the field is called Category with a capital “C” in the input.
+
+We click on Expression and enter:
+$json.Category
+
+You could drag and drop it from the input panel, but by now we’re familiar enough to type it directly. The preview shows “Keyboard,” which means it’s working correctly.
+
+At this point, we’ve successfully mapped the incoming data to a new structure with two fields: content and category. Content is rich, descriptive text meant for the LLM, and category is useful metadata indicating what type of product this is.
+
+Now let’s test it.
+
+We click Execute Step, and immediately on the right-hand side we see the result of the mapping. The output is clean, readable, and perfectly structured for our use case. This is exactly what we’ll provide to the LLM as context, along with the extra category metadata.
+
+Excellent. We’ve just completed a data mapping step.
+
+If we now go back to the main workflow view and click Execute Workflow, the same transformation is applied to all rows. All 60 records are mapped into this new format. This is the beginning of our data pipeline.
+
+At this point, I’d like you to go to Supabase, at supabase.com.
+
+If you haven’t already, please create an account. You’ll need to create an organization. As I mentioned yesterday, mine is called Donna Research. Feel free to call yours whatever you like—just don’t call it Donna Research.
+
+Once you’ve set that up, you should land on the Projects page. You won’t have any projects yet. If you don’t see this page, click on Projects in the left navigation or click on your organization name to get there.
+
+From here, click New Project.
+
+Let’s call the project rag. The compute size can be tiny. You should be able to stay on the free plan. If you’re on a paid plan, this will cost about a cent an hour, and you can always delete the project once we’re done.
+
+You’ll then need to choose a database password and select a region. Pick the region closest to you. Normally I’d choose the Americas, but I’m in the UK today, so Europe would make sense—though I might still choose the Americas to stay closer to where my n8n instance is running.
+
+Once you’re ready, click Create New Project.
+
+I’ve entered a strong password and stored it securely in a password manager, as you should. After clicking Create New Project, Supabase lets me know about potential costs, but this should be free for you on a trial account.
+
+Now the project is being set up. It’s called rag, and it will take a few minutes to provision everything, including your API endpoints—terminology you’re already very familiar with.
+
+Once that’s done, we’ll be the proud owners of our first Supabase project.
+
+# **R) Day 4 - How to Set Up Supabase Vector Database for RAG with n8n**
+
+I came back, and it’s done. It takes a few minutes for Supabase to finish setting everything up.
+
+Now let’s take a moment to look around the navigation inside our project. If you ever get lost, the way to get back here is simple: go to your Projects page, click on rag, and you’ll land right back here again.
+
+Looking at the navigation on the left, we can see several sections. There are Tables, there’s SQL, which you probably already know is how you query and interact with your database, and then a bunch of other options.
+
+If we click into the database tables, we’ll see that there are currently no tables at all. This is an empty database, which is exactly what we expect at this stage.
+
+So we go back to the project overview. Here we are again.
+
+Now this is the one point where I told you we’d have to do something that’s a little bit “code-y.” For those of you who are engineers, this will feel completely routine. For those of you who aren’t, this might feel like, “Wow, what is all of this?” But I want to reassure you: this is very cookie-cutter, very standard stuff.
+
+Yes, we do need to run some code at this point. I’ll give you that code in the course resources, and you’ll simply paste it in and run it. This is a very pedestrian activity. In fact, you could ask ChatGPT to write this for you with a short prompt, and it would do it instantly.
+
+And here’s a little secret, just between you and me: I actually had ChatGPT generate this SQL for me. I hate writing SQL because I always make mistakes, so I didn’t even bother doing it by hand. I just told ChatGPT exactly what I needed, and it produced this for me right away.
+
+You can use ChatGPT, Claude, Cursor, or whatever tool you like. The important thing is that when you’re ready, you need to go to the SQL Editor. This is where you can paste in SQL code and press the Run button to execute it.
+
+The reason we’re doing this is because the default tables that come with Supabase are not set up in exactly the way that n8n expects for vector-based retrieval. There isn’t an out-of-the-box button that says, “Create the exact tables that n8n wants,” so we need to create them ourselves.
+
+So we paste in this SQL script, which you can copy directly from the course resources.
+
+At a high level, here’s what this SQL does. It creates a table called knowledgebase, which is where our data will live. Each row in this table will have an id, content, metadata, and an embedding vector. The content is the text we just created in the Edit Fields node. The metadata includes things like category. The embedding is the vector representation of that content.
+
+There’s also one slightly janky thing here, which I’ll explain in a moment.
+
+In addition to the table, this SQL creates a database function called match_documents. This function is what n8n will call when it wants to retrieve relevant context from the vector database. In other database setups, this function might be created automatically for you, but because we’re using Supabase directly, we need to define it ourselves.
+
+The function returns the results in exactly the format that n8n expects. There’s also a small adjustment inside the function—specifically taking one minus a similarity calculation—because Postgres returns similarity scores slightly differently than what n8n expects. This detail isn’t something you need to memorize or deeply understand right now.
+
+If you wanted to generate this yourself, you could simply ask ChatGPT something like: “Can you generate Postgres SQL for Supabase that creates a knowledge base table with content, metadata, and embeddings in the format that n8n expects?” That’s exactly how this was created.
+
+Now let me explain the one janky thing I mentioned earlier.
+
+People who are new to RAG sometimes think that all the magic happens inside the vector database itself. While the vectors are important, the real magic happens in the embedding model. That’s the model that takes text and turns it into a vector.
+
+Postgres and Supabase do not create embeddings. They only store them and perform similarity searches on them. The embedding itself is generated outside the database—in our case, inside n8n using an embedding model.
+
+Because of that, the database needs to know how many dimensions each embedding vector will have. Different embedding models produce vectors of different sizes. Some might produce just a few numbers, while others produce thousands.
+
+So when we create the table, we must specify the number of dimensions in advance.
+
+In our case, we’re going to use a very standard, popular choice: OpenAI’s text-embedding-small model. This model produces vectors with 1,536 dimensions. That number—1536—must appear in two places in the SQL script.
+
+And yes, this is a bit janky. If you accidentally put 1537 or 1535, you’ll get a confusing error later about mismatched dimensions. That’s why this number has to be exactly right.
+
+OpenAI’s embedding model does have a cost, but it’s extremely small. For 60 documents, it’s effectively negligible. Even for thousands of documents, it’s still very inexpensive.
+
+That said, you’re not locked into OpenAI. Gemini has a great embedding model, and there are excellent open-source embedding models as well. If you choose a different model, the only thing you need to do is rerun this SQL with the correct number of dimensions for that model.
+
+You can rerun this script as many times as you like. It recreates the table if needed. Just make sure that the final version matches the embedding model you’re actually using. If you stick with OpenAI, then 1536 is the correct number.
+
+I know this feels a bit like voodoo, but it’s simply a requirement of how vector databases work. The database needs to know the vector size ahead of time.
+
+Alright, that was a long explanation. Now it’s time to actually run this.
+
+But wait—there’s one more thing we need to do first.
+
+Before running the SQL script, we need to enable vector support inside Supabase. To do that, go to the Database section on the left, then click on Extensions.
+
+You’ll see a list of available extensions. Search for vector. When it appears, enable it.
+
+Supabase will think for a moment, and then it will confirm that the vector extension is enabled.
+
+Now we can go back to the SQL Editor.
+
+You might see an arrow or warning there if you tried to run the script earlier. That’s fine. Now we press Run.
+
+The query runs, and we see “Success. No rows returned.” That’s exactly what we want—we weren’t trying to retrieve data, just create structures.
+
+To confirm everything worked, we go back to the Database section. A moment ago, it said there were no tables. Now we see it: the knowledgebase table.
+
+It has an id, content, metadata, and embedding field. This is exactly what we need. This is where our vectorized data will live.
+
+So we’ve done it. We’ve successfully set up a Supabase vector database.
+
+Now it’s time to head back to n8n, hook everything together, and perform the load step of ETL by populating this database with our data.
+
+# **S) Day 4 - Supabase Vector Store Integration with n8n Using OpenAI Embeddings**
+
+Okay, it’s time to connect n8n to Supabase. This is the big integration for today.
+
+First, here we are in Supabase, looking at our database table. On the left, you can see the knowledgebase table listed. You’ll also notice a database side navigation with a Settings option there—but that is not the one we want to use right now.
+
+Instead, go further left to the main project navigation. Make sure you’re looking at the Project Overview screen. From there, you’ll see a list of sections. What you want to click on is Project Settings.
+
+This is an easy place to get confused, because Supabase has several places called “settings.” The one you want right now is specifically Project Settings, not database settings or table settings.
+
+Once you’re inside Project Settings, look at the left-hand menu and click on Data API. That’s the section we need.
+
+The first thing you’ll see on the Data API page is a URL. This URL is the endpoint for your Supabase database. You need to copy this URL and put it somewhere safe, because we’re about to use it in n8n.
+
+Be careful when you copy it. Don’t paste it into a tool that might reformat or alter characters. I know you’re already good at this, but it’s worth saying—this URL must remain exactly as it is.
+
+This URL is the first credential we’ll need.
+
+Next, look a little further down the page at API keys. Supabase recently introduced a newer API key system using publishable and secret keys, but n8n does not yet support that newer approach.
+
+Instead, n8n uses the legacy API keys, which are still extremely common and widely used.
+
+So on the API Keys section, switch over to the Legacy keys tab. You’ll see a key there with a little orange “secret” label next to it. This is the key we need.
+
+Click Reveal, then copy that key. Keep it safe. Just like before, you can leave this Supabase tab open and switch back and forth between tabs to copy and paste directly. That’s often the safest approach so you’re not storing keys anywhere unnecessarily.
+
+Alright, now let’s go do the integration.
+
+We switch back to n8n.
+
+Click the plus (+) button to add a new node. The node we’re going to add is called Supabase Vector Store. Be careful here—there is also a normal Supabase node, but that’s for standard databases. We want the vector store version because we’re working with embeddings.
+
+Once the node is added, look at the available operations. The one we want is Add documents to vector store. Select that.
+
+Now it’s time to set up credentials—everyone’s favorite part.
+
+Click Create new credential.
+
+The first field is Host. This is where you paste the Supabase URL you copied earlier from the Data API section.
+
+Next is the Service Role Secret. This is where you paste the legacy API key you revealed and copied from Supabase.
+
+If you’ve still got Supabase open in another tab, now’s a great time to switch back, copy it again, and paste it directly so you know it’s exact.
+
+Once both fields are filled in, click Save.
+
+And now… drumroll please.
+
+Green. Green is what we want. If you see green, the connection worked.
+
+If you don’t see green, don’t panic. This is usually just a copy-paste issue. Go back, check the URL, check the key, paste them again carefully. Be the API-key pro that I know you are.
+
+Once you’ve got green, congratulations—you now have a working Supabase vector store connection in n8n.
+
+Now, this node needs two things in order to do its job.
+
+The first one is probably exactly what you’re expecting: an embedding model. As I mentioned earlier, the smart part of RAG does not live in Supabase. Supabase only stores vectors. The embedding model is what actually converts text into vectors.
+
+So here, we add an Embedding node.
+
+We’re going to use OpenAI Embeddings. You’ll see that there are several embedding providers available—some free, some paid, some from Gemini, some open source.
+
+If you want to avoid cost entirely, you can absolutely explore those options. Many Gemini models are free within limits, and open-source embeddings are completely free if you know how to run them.
+
+However, if you choose to follow along with me, we’ll use OpenAI text-embedding-3-small, which is extremely common and very inexpensive. OpenAI does require a small upfront balance, but the per-use cost is tiny—especially for something like 60 documents.
+
+This model produces embeddings with 1,536 dimensions, which is exactly the number we specified earlier when we created the Supabase table. This alignment is critical.
+
+OpenAI also offers text-embedding-3-large, which produces around 3,000 dimensions and is more powerful but slightly more expensive. We don’t need that here.
+
+So we select text-embedding-3-small.
+
+If you ever choose a different embedding model, just remember: you must go back to Supabase and rerun the SQL script with the correct number of dimensions so everything matches.
+
+Next, we need to configure the second required piece: the Document Loader.
+
+This is the component that tells n8n how to take incoming data, chunk it if necessary, and load it into Supabase.
+
+We’ll use the default document loader, which is perfectly fine. This is where we describe how our data should be passed into the vector store.
+
+By default, it’s set to Load all input data, which technically works—but it’s not ideal. That would push a lot of unnecessary fields into Supabase.
+
+Instead, we switch it to Load specific data.
+
+Now we tell it exactly what data we want to load. And the answer is simple: we want the content field that we carefully constructed earlier.
+
+So we add an expression and set it to:
+
+{{$json.content}}
+
+You already know this syntax by now. You could drag and drop, but we’re being pros.
+
+This ensures that only the meaningful text goes into the knowledge base, not all the surrounding fields.
+
+Next, we configure text splitting.
+
+We can leave this at Simple, which is the default. This means it will try to split text every 1,000 characters with a small overlap.
+
+In our case, none of the product descriptions are anywhere near 1,000 characters, so this effectively means one chunk per product, which is exactly what we want.
+
+If you were dealing with long documents, this same configuration would automatically break them into sensible chunks. This is a great default and works very well in practice.
+
+Finally, we move to Options.
+
+There’s only one option we can add here, and that’s Metadata.
+
+Metadata lets us attach extra information to each chunk—information that might be useful later for filtering, reasoning, or giving the agent more context.
+
+We click Add property.
+
+The name of the property will be category.
+
+The value should be an expression, and of course, it comes from the input:
+
+{{$json.category}}
+
+At this point, n8n practically auto-completes it for us because it knows what we’re doing.
+
+This means that when something like “Keyboard” is loaded into the knowledge base, it will be tagged in metadata as category = Keyboard.
+
+We could add more metadata fields if we wanted—SKU, price, or anything else—but this is perfect for now.
+
+And that’s it.
+
+We’ve now fully configured the Supabase vector store node with:
+
+Proper credentials
+
+An embedding model
+
+A document loader
+
+Chunking
+
+Metadata
+
+This is exactly what we want, and we’re ready to load our data into the vector database.
+
+# **T) Day 4 - Build a RAG Pipeline Using n8n and Supabase Vector Database**
+
+Okay, now we have our full workflow, so let’s tidy things up.
+
+You’ll notice there’s a red box on one of the nodes saying “Parameter table name is required.” That’s a fair complaint—we haven’t told Supabase which table to write to yet. So let’s fix that.
+
+We head back to the Supabase Vector Store node. It’s asking which table name we want to use. If you right-click and look at the available tables, you’ll see Knowledge Base, which is the table we created earlier using our SQL script. That’s exactly the one we want. Once we select that, the error disappears.
+
+Now we have a complete workflow that’s ready for data ingest. Let’s rename it to something meaningful—Data Ingest—and get ready to run it.
+
+Before we do that, let’s quickly jump back to Supabase and confirm the current state of the database. On the left, go to Database, load the tables, and open Knowledge Base. As expected, it’s empty. There’s no data in it yet.
+
+Back in our workflow, we’ll hide the logs for a cleaner view and press Execute Workflow.
+
+Here we go.
+
+You can see it loading the 60 items, embedding them, and writing them to Supabase. The workflow completes successfully, and the count shows 60 documents loaded. Each row has been vectorized and stored. Everything is green.
+
+What might have taken days—or even a week—to wire together manually has been done in minutes using n8n and Supabase.
+
+But let’s verify it.
+
+Back in Supabase, the table initially looks empty, but that’s just because it hasn’t refreshed yet. Once it refreshes, there it is—the Knowledge Base table populated with 60 rows.
+
+Each entry has:
+
+an id
+
+content (the text)
+
+metadata
+
+and embedding, which is the vector
+
+If we open one row, we can see the content text—exactly what we want to feed into an LLM during retrieval. In the metadata, we can see the category field we added, along with some automatically generated metadata. And the embedding column contains the 1,536-dimensional vector produced by the OpenAI embedding model.
+
+At this point, I realized I made a small typo.
+
+Some of the content includes things like “$1.59 .99” or descriptions starting with a stray dollar sign, like “$vertical design” or “$compact.” That’s clearly not intentional—but this actually gives us a great opportunity to demonstrate how easy it is to fix and rerun the pipeline.
+
+First, we’ll delete the existing data. In Supabase, select the table and delete all 60 rows. Yes, it can’t be undone—but that’s fine.
+
+Now we go back to our workflow, open the field mapping node, and there it is—the extra dollar sign in the description field. We remove it, save the node, and return to the workflow.
+
+You’ll notice a yellow warning triangle on the node, indicating that it has changed since the last execution. That’s expected.
+
+We run the workflow again.
+
+Once again, all 60 items are embedded and stored successfully. Back in Supabase, the table refreshes automatically, and when we open a row, the typo is gone. Clean data, correct content, everything exactly as we want it.
+
+This is a great example of how powerful and forgiving these pipelines are. Small mistakes are easy to fix, and rerunning the entire ingest process is trivial.
+
+So let’s recap what we’ve built.
+
+We talked about the two major phases of a RAG system:
+
+Data ingest (what we did today)
+
+Question answering (what we’ll do tomorrow)
+
+In the ingest phase:
+
+Data Source: We pulled product data from a Google Sheet.
+
+Extract: An n8n node fetched that data.
+
+Transform: A field mapping node created structured content and categories.
+
+Chunking & Vectorization: Handled by the document loader and embedding model.
+
+Load: Data was stored in Supabase as vectors in a Postgres database.
+
+You may have noticed that several of these steps were grouped into node clusters. The AI-related logic is one cluster, and the Supabase integration is another. That modularity is intentional and very powerful.
+
+Right now, this workflow is triggered manually by pressing a button. But you could just as easily:
+
+run it on a schedule
+
+trigger it when the spreadsheet changes
+
+or connect it to another event
+
+And that’s a wrap for data ingest—connecting to Supabase and working with vectors.
+
+Tomorrow is where everything really comes together. We’ll complete the project for Week Two, focusing on accelerating development with voice agents and RAG.
+
+You’ve now reached the 60% mark. Tomorrow, we close out Week Two.
+
+You definitely don’t want to miss it.
