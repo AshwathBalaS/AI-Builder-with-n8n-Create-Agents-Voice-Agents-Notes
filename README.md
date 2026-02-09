@@ -103,6 +103,16 @@ This Repository contains my "AI Builder with n8n: Create Agents &amp; Voice Agen
 
 **T) Day 4 - Build a RAG Pipeline Using n8n and Supabase Vector Database**
 
+**U) Day 5 - Build RAG-Powered AI Voice Agent with N8N, Supabase & ElevenLabs**
+
+**V) Day 5 - How to Build an AI Agent RAG System Using n8n and OpenAI Embeddings**
+
+**W) Day 5 - Connect ElevenLabs Conversational AI to n8n Workflow with Webhook**
+
+**X) Day 5 - Build Voice AI Agent with ElevenLabs and n8n Webhook Integration**
+
+**Y) Day 5 - How to Connect ElevenLabs AI Voice Agent to Twilio Phone Number**
+
 
 
 # **I) Week 1 - Automate with Workflows in n8n Cloud**
@@ -3776,3 +3786,762 @@ Tomorrow is where everything really comes together. We’ll complete the project
 You’ve now reached the 60% mark. Tomorrow, we close out Week Two.
 
 You definitely don’t want to miss it.
+
+# **U) Day 5 - Build RAG-Powered AI Voice Agent with N8N, Supabase & ElevenLabs**
+
+Well.
+
+Hello there.
+
+Today is a blue day.
+
+Today marks the completion of the Business Commercial Project as part of Week Two. This week has been all about accelerating your business—or your client’s business—and bringing real, practical value through AI.
+
+I’ll put it to you this way: I believe today is going to be relatively low on challenge and relatively high on satisfaction—but you’ll be the judge of that. Let’s see how it unfolds.
+
+Today, we are wrapping up our expert product—the system that allows you to act as an expert on behalf of your client. We’ll be building both our RAG agent and our voice agent, bringing back the return of ElevenLabs and voice integration. And yes, before we do that, I need to begin one more time with a recap on RAG—this will be the last one, I promise.
+
+That said, repetition is often the best way to learn, and by now you’re already quite familiar with this material.
+
+Let’s recap.
+
+A user asks a question through a chat interface. That question enters our code—perhaps running in n8n. The core idea behind Retrieval-Augmented Generation (RAG) is that instead of relying only on the LLM’s internal knowledge, we first look up relevant information from our own data.
+
+To do this, we use a special kind of model called an encoder, also known as an embedding model or vector embedding model. This model takes the user’s text and converts it into a set of numbers called a vector.
+
+If you’re using the popular OpenAI text-embedding-3-small model, it produces a vector with 1,536 numbers. You can think of this as a point in a 1,536-dimensional space.
+
+Once we have that vector, we compare it against all the vectors stored in our knowledge base. Every piece of data in that knowledge base has already been converted into its own vector during ingestion.
+
+This allows us to find the vectors that are closest to the user’s question. Those closest matches represent the most relevant content for answering the question.
+
+We then take the original text associated with those vectors and pass it, along with the user’s question, to the LLM. The LLM uses that context to generate a response.
+
+The result is a knowledgeable answer that gives the illusion that the LLM itself knows everything about your database—when in reality, we’re simply supplying it with the right context at the right time.
+
+We also learned about chunking, which is the practice of dividing documents into smaller pieces before embedding them. In our case, none of our documents exceeded 1,000 characters, so we ended up with exactly one chunk per row in the Google Sheet we used as our source.
+
+RAG consists of two main phases.
+
+The first phase is data ingestion, which is what we completed yesterday. During ingestion, you start with a source of data, extract it, and then transform it. In our case, we used a field mapping node to reshape the data into a format suitable for our vector store—specifically creating content and category fields.
+
+After transformation, the data is chunked (if necessary), vectorized using the embedding model, and then loaded into the vector store.
+
+For our vector store, we used Postgres via Supabase, which is a managed Postgres service. This ingestion pipeline can be run once to initialize your knowledge base, but in real production systems, it’s often run continuously.
+
+There are multiple ways to do this. You might schedule the pipeline to run periodically, or you could build something more advanced—such as a system that listens to a shared Google Drive folder. Whenever a new document is added, the pipeline automatically triggers, processes the document, chunks it, embeds it, and stores it in the vector database.
+
+That’s the kind of setup you’d expect in a live, production-ready environment, where the knowledge base is always kept up to date.
+
+The second phase of RAG—the one we’re focusing on today—is question answering.
+
+In this phase, the user asks a question, and an AI agent is responsible for answering it. This agent is powered by an LLM, which not only generates the final answer but also orchestrates how the answer is produced.
+
+The agent has access to tools. One of those tools allows it to take the user’s question, convert it into a vector, search the vector store, and retrieve relevant content. This is what we call Agentic RAG.
+
+You could also equip the agent with additional tools—such as structured database queries or APIs—to further enhance its capabilities.
+
+From a business perspective, this is the classic commercial opportunity for generative AI: an expert question-answering system that behaves as though it knows everything about your business or your client’s products.
+
+It’s easy to see how powerful this is. It allows businesses to offload manual, repetitive, and knowledge-intensive tasks to AI workers, freeing human workers to focus on higher-value activities.
+
+For this solution, we’re using Supabase, a cloud provider built on top of Postgres, which is a widely used, scalable relational database trusted by many enterprises.
+
+While this is designed to be a low-code course, it is not a no-code course. There are moments—like writing some slightly janky SQL or Postgres functions—where we need to copy and paste code. But the good news is that this code is cookie-cutter and reusable, and tools like ChatGPT can generate, explain, and even debug it for you.
+
+Yesterday, we completed the ingestion side of the pipeline. We performed field mapping to transform data from the Google Sheet into the structure required by our vector store.
+
+That work is now done.
+
+Our RAG knowledge base in Supabase contains 60 rows, each with a 1,536-dimensional vector. The intelligence here comes entirely from the OpenAI embedding model—that’s the component that gives meaning to the vectors.
+
+Our mission for today is clear:
+
+Add the question-answering workflow
+
+Integrate the voice agent
+
+Declare victory 🎉
+
+We begin by taking one last look at our beautiful ingestion pipeline and making sure it’s saved. Then we return to the main screen and create a new workflow—this will be the home of our Agentic AI question answerer.
+
+The first step in this new workflow is a familiar one:
+“When chat message is received.”
+
+This is our trigger. We know it well.
+
+Next, we press Tab to add a node, select AI Agent, and press Escape. There it is.
+
+If you double-click the node, you’ll see it’s connected to the chat trigger using JSON input. This is exactly what we want, and now you understand why that connection matters.
+
+Next, we choose a chat model.
+
+We’ll go with Gemini again—specifically, Gemini 3 Flash (Preview). Of course, you could choose any model you like, including OpenRouter-based models.
+
+For memory, we’ll use simple memory.
+
+And now, it’s time to add the tool.
+
+# **V) Day 5 - How to Build an AI Agent RAG System Using n8n and OpenAI Embeddings**
+
+Okay, let’s do this.
+
+The next question is: what tool are we going to pick?
+
+We press the plus button, and of course, it’s going to be exactly the same as before. We choose Supabase. Specifically, we want a Supabase Vector Store as our tool.
+
+Up it comes.
+
+We select Supabase Account → Operation, and then choose “Retrieve documents as tool for AI Agent.” That sounds like exactly what we want.
+
+Let’s pause for a moment and look at the other options.
+Yes—this is definitely the correct one.
+
+Now we need to add a description.
+
+This description is important because it tells the AI agent when it should use this tool. So we want something clear but generic enough to work for any company.
+
+For example:
+
+Use this tool to look up any product information that relates to products offered by the company.
+Use this tool to look up any information that relates to products offered by the company.
+
+We deliberately keep this description a bit generic so that it applies regardless of what company or client you’re working with.
+
+This time, I’m going to try not to forget something I missed last time: selecting the table name.
+
+The table list pops up, and we select knowledge_base.
+
+We also choose to include metadata in the results. There’s a limit setting here as well—we might as well allow it to return up to ten documents. There’s no reason not to.
+
+There’s also an option for reranking results, which is one of the more advanced features. This allows an LLM to decide how to reorder the retrieved documents for relevance. You can absolutely experiment with that later if you like.
+
+But for now, we’re going to keep things vanilla and out-of-the-box.
+
+And that’s it.
+
+Here is our tool.
+
+It looks great—except there’s a red warning box. That’s because we haven’t yet told it which embedding model to use.
+
+At this point, you might be thinking:
+“Hang on—haven’t we already embedded all our data and stored it in the vector database?”
+
+And yes, you’re absolutely right.
+
+But the reason we still need an embedding model here is simple: we need to vectorize the user’s question when it comes in.
+
+Remember that first step in the RAG diagram—the user’s question must also be turned into a vector so we can compare it against the stored vectors in the knowledge base.
+
+So yes, we need to specify an embedding model.
+
+We select OpenAI Embeddings.
+
+There it is.
+
+We choose text-embedding-3-small, and that’s all we need.
+
+As soon as we do that, the angry red warning disappears.
+
+Everything now looks good.
+
+At this point, you might be thinking this should be more complex—but honestly, this is it.
+
+This is what it takes to build a fully functional RAG system.
+
+What’s especially satisfying is that this workflow diagram looks remarkably similar to the schematic we drew earlier explaining how RAG works conceptually. That’s one of the beautiful things about n8n—you can literally draw out your thinking on the canvas in a way that feels natural and expressive.
+
+It’s simple, visual, and very powerful.
+
+Alright.
+
+I think it’s time to try it.
+
+Let’s do it.
+
+We run the workflow.
+
+The chat starts:
+
+“Hi there. Everything’s off. Hello.
+If you’re looking for specific products or have questions about what we have in stock, feel free to ask.”
+
+That response alone tells us something important—the agent has already read the tool description and understands the domain it’s working in.
+
+So far, so good.
+
+Let’s ask a question.
+
+“Do you sell any keyboards?”
+
+We can see what’s happening behind the scenes.
+The agent is issuing a vector query.
+It’s performing a lookup.
+Results are coming back from the knowledge base.
+
+And then—boom.
+
+“Yes, yes, we have a wide selection of keyboards to suit different needs. Here are some of our popular options…”
+
+It lists gaming keyboards, performance keyboards, RGB keyboards—and more.
+
+There are quite a few results.
+
+What’s impressive is that it includes prices, descriptions, and organizes everything neatly. I was about to ask it for the price, but it already had that information.
+
+I even recognize a couple of the products, which is reassuring—it confirms that this information really is coming from the database.
+
+Because we allowed it to retrieve up to ten documents, it’s able to present a full range of keyboards, which is exactly what we want.
+
+Let’s try another question.
+
+“How much does it cost to purchase more memory for my computer?”
+
+Again, we see the lookup happening.
+
+It retrieves relevant entries from the knowledge base and responds with an explanation that varies based on whether it’s a desktop or laptop, followed by pricing information.
+
+Every part of that answer is grounded in data retrieved from the vector store.
+
+And there you have it.
+
+If you thought this part was going to be complicated—it really isn’t.
+
+This is where the simplicity and power of n8n truly shine. Building this RAG pipeline was incredibly straightforward.
+
+The real aha moment comes when you realize how scalable this is.
+
+It wouldn’t be very impressive if I said I built a question-answering system for 60 products—you could just paste that into ChatGPT.
+
+But this system doesn’t care whether it’s 60 products, 60,000 products, or 600,000 products.
+
+It would ingest the data.
+It would vectorize it.
+It would find the nearest neighbors.
+And it would answer questions as if it knew everything.
+
+That’s the true power of RAG, and that’s the power of n8n—it makes something incredibly sophisticated feel easy.
+
+But you already know the deal.
+
+We’re not here to chat inside this little chat box.
+
+That’s not the point of Week Two.
+
+Not at all.
+
+So let’s hide the chat.
+Let’s delete it.
+
+We have absolutely no interest in it anymore.
+
+It’s time to build our voice agent
+
+# **W) Day 5 - Connect ElevenLabs Conversational AI to n8n Workflow with Webhook**
+
+And I hardly need to remind you that there are two different integration patterns for connecting ElevenLabs with n8n.
+
+The first pattern is where n8n is the boss. In this setup, n8n calls out to the ElevenLabs API to perform text-to-speech and speech-to-text. Typically, you start with speech-to-text, process the text in n8n, and then convert the result back to speech using text-to-speech.
+
+That approach works—but it’s not the best one.
+
+The better approach is to let ElevenLabs be the boss.
+
+In this model, ElevenLabs manages the voice agent itself, and it treats n8n as a tool. The entire n8n workflow becomes a callable tool, and the way we expose that tool is through a webhook.
+
+ElevenLabs will call that webhook whenever it needs to invoke our business logic. In other words, ElevenLabs runs the voice experience, and when it needs reasoning, product knowledge, or decision-making, it calls into n8n.
+
+This is the strategy we’re going to use.
+
+Conceptually, this setup can feel a little tricky at first.
+
+You’ve got tools calling tools, systems triggering other systems, and it can take a moment to mentally piece together what’s happening. But once it clicks, it makes complete sense—and you can clearly see why this approach gives you much lower latency.
+
+ElevenLabs can handle the speech conversion while it’s running its tool, rather than waiting for n8n to finish everything end-to-end. That separation of concerns is what makes this architecture more efficient and production-ready.
+
+So here’s the big picture.
+
+What we’ve built in n8n is our business logic layer. It’s our backend workflow, and it’s going to be triggered by a webhook. That webhook will be called by ElevenLabs as part of a tool inside the voice agent.
+
+Before we move on, I wouldn’t be doing my job if I didn’t walk you through the API terminology one more time—hopefully without you wanting to kill me.
+
+I did promise we’d review it often.
+
+When we talk about calling an API, what we mean is making a web request using HTTP. The URL you send that request to is called an endpoint.
+
+So you’ll hear things like, “I’m calling an API by making an HTTP request to an endpoint.” That’s exactly what we’re doing when n8n talks to Supabase—it’s calling endpoints.
+
+Now, if you flip that idea around, a webhook is essentially a reverse API. Instead of you calling someone else, you make a URL available and say, “Hey, call me when something happens.”
+
+For example, you might say:
+
+“Call this webhook when an email arrives.”
+
+“Call this webhook when a document is dropped into Google Drive.”
+
+“Here’s my webhook—notify me when an event occurs.”
+
+In all of these cases, something external is making a web request to you to trigger a workflow.
+
+That’s exactly what we’re doing here: ElevenLabs will call our webhook to trigger our n8n flow.
+
+There are also different types of HTTP requests, known as methods. You’ve probably seen these before.
+
+The most common ones are GET and POST.
+
+GET is used to fetch information. It’s what browsers use to load web pages, and in APIs, it’s commonly used to retrieve JSON data.
+
+POST is used to send information. Originally, it was used when submitting forms on the web. In APIs, it’s used to send structured data—usually JSON.
+
+A POST request includes something called a body, and that body contains the JSON data being sent.
+
+You don’t need to know every technical detail here—it’s just important to understand the basic terminology so that when we choose “POST” from a dropdown, it makes sense why we’re doing it.
+
+Alright—back to our workflow.
+
+We’ve already set up our question-answering agent. Let’s rename it while we’re here to something more definitive—Agentic feels like a good name.
+
+We’ve deleted the chat trigger.
+
+So what’s missing?
+
+You probably said it out loud already.
+
+Yes—the webhook.
+
+We add a Webhook node.
+
+There it is.
+
+As before, n8n generates a URL for us. This is n8n publishing a webhook endpoint that something else can call to trigger the workflow.
+
+We choose POST as the method, because information is being sent into n8n.
+
+You’ll notice other HTTP methods listed there—you don’t need to worry about them right now. We may use some of them later, but POST is exactly what we want here.
+
+We also choose not to respond immediately. Instead, we’ll respond using a Respond to Webhook node, which we’ll add shortly.
+
+That’s all we need to configure here.
+
+Everything looks good.
+
+We click back out.
+
+And now we just need to connect the webhook to our agent.
+
+Done.
+
+You’ll see “POST” displayed on the connection, just to reassure you that everything is wired correctly.
+
+Now, there’s one more thing we need to fix.
+
+This agent is currently expecting a chat input, and that’s not going to work anymore.
+
+If you double-click it, you’ll see it says:
+“Connected chat trigger node – JSON chat input.”
+
+That won’t work with a webhook.
+
+So we change this to “Define below”, switch it to an expression, and pull in the value we need from the incoming webhook payload.
+
+If you remember what we did on Day Two, you might already know what goes here.
+
+When an HTTP POST is made, the data arrives in the body of the request. So we access it using json.body.
+
+Inside that body, we’re going to send a field called question.
+
+So the expression becomes:
+
+{{ $json.body.question }}
+
+We use double curly braces because it’s an expression.
+
+Right now, n8n can’t show us a value because the workflow hasn’t run yet—but that’s fine. We know this will work once ElevenLabs sends data to it.
+
+Just remember: ElevenLabs will include a question field in the JSON body when it calls this webhook.
+
+Say that three times fast.
+
+Alright.
+
+Now we’ve set up the webhook and configured the agent to correctly receive incoming data.
+
+What’s left?
+
+One last thing.
+
+We add another node: Respond to Webhook.
+
+We leave all the defaults as they are.
+
+This node will take whatever comes out of the agent—typically JSON containing an output field—and send it back as the HTTP response.
+
+That’s exactly what ElevenLabs expects.
+
+This is a complete Agentic RAG workflow.
+
+Make sure you save your work.
+
+Ctrl + S.
+Command + S.
+Do it regularly.
+
+Everything is now set up on the n8n side.
+
+# **X) Day 5 - Build Voice AI Agent with ElevenLabs and n8n Webhook Integration**
+
+Okay, so we head over to Agents.
+
+Alright.
+
+We click New Agent.
+
+We choose a blank agent, and we’re prompted to pick a name that reflects the agent’s purpose.
+
+Let’s think about this for a moment.
+
+We’ll call it Electronics E-commerce Sales Expert.
+
+That feels accurate.
+
+So we enter the name:
+Electronics E-commerce Sales Expert
+
+And then we click Create Agent.
+
+Here we are.
+
+Now it’s time to define our agent.
+
+This time, let’s actually pause and focus on the system prompt, because this is important.
+
+We write something like:
+
+“You are a knowledgeable online sales agent representing an e-commerce store for computer accessories. You answer user questions using your tool to look up any information related to the products offered by the store.”
+
+That’s clear, concise, and gives the agent a strong identity and purpose.
+
+That’s our system prompt.
+
+Next, we need to choose a voice.
+
+Let’s take a look at the available options.
+
+I think we’ll go back to Miss Walker.
+
+Miss Walker is warm, reassuring, and rounded—she works really well for a sales expert.
+
+So we select Miss Walker.
+
+Alright, let’s move on.
+
+Now it’s time to create the tool.
+
+We go to Tools and click Add Tool.
+
+We’re going to add a Webhook Tool, and we’ve done this before, so the process should feel familiar.
+
+First, the tool name. Remember, tool names can’t have spaces.
+
+We’ll call it:
+ask_question_about_products
+
+Next, the description:
+
+“Use this tool to ask a question related to the products offered by the store.”
+
+The method is POST—we chose POST earlier for a reason, and we’ll stick with it.
+
+Now for the URL.
+
+We switch back to n8n.
+
+We could go straight to production, but best practice is to start with the test route.
+
+So we go to the Webhook node, copy the Test URL, and make sure we’ve copied the correct one.
+
+We come back to ElevenLabs and paste the URL into the tool configuration.
+
+Next, we configure the execution settings.
+
+We set the timeout to something like one minute, giving the agent plenty of time to do its research.
+
+We select the option to disable interruptions.
+
+We turn off pre-speech.
+
+The execution mode is set to Immediate, meaning the tool executes as soon as the agent decides to use it.
+
+Now we get to the fun part.
+
+We enable typing sounds.
+
+Let’s listen to that.
+
+It might be a bit quiet depending on your microphone, but yes—that’s a typing sound.
+
+That’s pretty cool.
+
+For sound behavior, we choose Always play.
+
+Now, very important—we make sure we save this.
+
+Last time, I somehow forgot to save, so we’re not making that mistake again.
+
+Everything looks good so far.
+
+Now it’s time for the body parameters, which is the key part of this setup.
+
+For the description, we write:
+
+“Provide the question for the product expert who will look up relevant context in a knowledge base.”
+
+We add a single parameter:
+
+Data type: String
+
+Name: question
+
+This matches exactly what we configured on the n8n side using json.body.question.
+
+We mark it as required.
+
+For the parameter description, we write:
+
+“The question for the product expert.”
+
+Simple and clear.
+
+That’s everything we need.
+
+So we click Add Tool.
+
+Let’s double-check that everything saved correctly.
+
+Yes—the timeout is set to one minute.
+
+Yes—execution mode is immediate.
+
+Everything looks good.
+
+The tool is fully constructed.
+
+Now we just have a couple of small things left to do.
+
+First, we go back to n8n.
+
+We look at our workflow and remove the Simple Memory node.
+
+We don’t want memory here because this workflow acts as a backend service. It may be called by completely different conversations each time, and there’s no need for it to remember anything.
+
+Also, since it’s connected to a webhook rather than a chat input, memory would fail anyway.
+
+So we delete it.
+
+Next, we press the Execute Workflow button to start the test listener.
+
+This is important—without this running, the webhook won’t receive test requests.
+
+With that done, it’s time to give this a try.
+
+To make this easier to see, we resize the windows so we can watch what’s happening behind the scenes.
+
+We keep n8n visible so we can see the green ticks as the workflow runs.
+
+Now we go back to the agent and click Preview.
+
+We resize things again so everything fits nicely on the screen.
+
+Perfect.
+
+Now we talk to the agent.
+
+“Hello.”
+
+The agent responds.
+
+“How can I help you today?”
+
+We ask:
+
+“I’m wondering what keyboards you have.”
+
+The agent says:
+
+“Let me check that for you.”
+
+And then—behind the scenes—it calls our webhook.
+
+The response comes back:
+
+“We offer a wide variety of keyboards, including gaming, mechanical, productivity, ergonomic, and office keyboards. Some popular models include the Prototype RGB Gaming Keyboard, the Prototype Wireless Mechanical Keyboard, and the TypeMaster Ergonomic Split Keyboard. We also have specialty tools like the NovaKey Macro Pad 12. Are you looking for a keyboard for a specific purpose, like gaming or office work? I’d be happy to help you narrow down your choice.”
+
+Honestly, it feels incredibly realistic.
+
+So human-like, in fact, that I sometimes feel compelled to answer back. I even feel a bit bad hanging up—which is kind of wild when you think about it.
+
+That’s a side effect of how natural this feels.
+
+That was really fun.
+
+I loved being able to see the workflow running in real time and watching the green ticks appear in n8n.
+
+I’d say this was a very successful test.
+
+But—we’re not quite done yet.
+
+If you try asking a second question, you’ll notice the agent won’t respond.
+
+And if you’re wondering why, it’s because in test mode, the webhook only works once per execution. After it receives a single request, it stops listening.
+
+That means we need to deploy this workflow to production.
+
+We know how to do that.
+
+We go back to the Webhook node in n8n.
+
+We copy the Production URL.
+
+Now we click Save and Publish.
+
+Publish.
+
+The workflow is now live.
+
+Next, we return to ElevenLabs.
+
+We go to Tools and edit our webhook tool.
+
+We replace the test URL with the production URL.
+
+We save the changes.
+
+It’s very important to be precise when copying and pasting these URLs—even a small mistake will break the integration.
+
+Finally, we go back to the agent.
+
+We click Publish.
+
+That’s done.
+
+Now we click Copy Shareable Link.
+
+The link is copied to the clipboard.
+
+# **Y) Day 5 - How to Connect ElevenLabs AI Voice Agent to Twilio Phone Number**
+
+And of course, this time there’s no point in showing anything side by side because we’ve already got it deployed to production. So you don’t get to see that workflow in the same way. But we can just call the agent here like this.
+
+“Hello. How can I help you today?”
+
+“Hello, I’m interested in getting a keyboard.”
+
+“What do you have?”
+
+“Let me check our keyboard selection for you. We have a wide range of keyboards available, including gaming, mechanical, productivity, office, and ergonomic options. Do you have a specific type of keyboard or feature in mind?”
+
+“Yes. Mechanical keyboard, please.”
+
+“Certainly. Let me narrow down the options to mechanical keyboards. We have a variety of mechanical keyboards, including gaming, productivity, and specialty options. Some popular choices are the Prototype RGB Gaming Keyboard, the Prototype Wireless Mechanical Keyboard, and the Nova Key Tactile Keyboard. Do any of these sound interesting, or would you like more details on a specific model or switch type?”
+
+“Yeah, the Prototype mechanical gaming one, please. How much is that?”
+
+“Let me get the price for the Prototype RGB Gaming Keyboard. The gaming keyboard is $129.99.”
+
+“All right. Thank you very much.”
+
+Ha ha ha. I didn’t want to do that. I wasn’t sure whether I should keep talking to her or something. It’s crazy.
+
+Anyway, that’s success. That is success. We just had a full-on conversation with a voice agent. It felt pretty natural, and it worked pretty well, I’ve got to say. I think the way the mechanical typing sound continues while it’s calling tools is so effective. It’s so clever.
+
+Otherwise, that pause would be quite jarring. So it just works having that filler in there as well. And yeah, that was just an amazingly immersive experience.
+
+When you think of all the moving parts that were happening there, it’s pretty impressive. We were using Gemini 2.5 Flash in ElevenLabs. We were using Gemini 3 Flash as our agent model in n8n. And of course, we were using OpenAI embeddings to vectorize before looking things up in Supabase, then finding relevant context and returning it.
+
+That’s quite a round trip. There were a lot of moving parts and a lot of calculations happening to achieve what appeared to be a frictionless experience. That’s a success.
+
+Now, we have an optional extra segment. And let me please insist that this is optional. This should only be for people who are interested in doing it and who don’t mind putting up with a little bit of hassle. That optional segment is setting up a phone number with Twilio.
+
+Twilio is a wonderful company with a beautiful platform, but they do tend to get a bit bogged down in regulations. There are various hoops you have to jump through to be allowed to text message people or make phone calls, and it also comes at a cost.
+
+They have a number of free plans, but the free varieties depend on all sorts of things. To have a phone number, I do believe you have to pay. I want to set up a phone number in Twilio to show you how we can have our voice agent on the other end of the phone, but again, this is optional and only for people who want to do it.
+
+If you want to try it out, you go to Twilio and land on their front page. You can start for free and sign up for an account. It will ask you a bunch of questions, as these things always do, and it might be slightly different depending on your region. So if you choose to follow along rather than just watch me, then on your head be it—you may need to jump through a few hoops here and there.
+
+Once you’ve signed in, you’ll come to the Twilio landing page. It’s a bit confusing to navigate at first. There are various screens designed to encourage you to try things out. We’re heading into Voice, and from there to the “Try it out” screen.
+
+This is where you can get a number by clicking “Get a number.” You’ll be asked to select from a list of available numbers. You’ll need to pay a small amount. I paid $1.25 to get a number in New York State. At some point, by clicking around, I ended up on the billing screen and had to enter a credit card.
+
+This stuff isn’t super easy, but I’ll say this: if you ever get stuck, ChatGPT knows Twilio pretty well and can tell you exactly where to click and what to do, because the interface is a little clunky.
+
+That said, Twilio itself is generally very easy to use and very reliable. There’s also less regulation around phone calls than text messaging or emails, so it’s actually fairly easy to get your phone number set up.
+
+Once you’ve done that, you’ll have a phone number. The way you know you’ve been successful is by going to Phone Numbers → Manage → Active Numbers. You should see your number listed there, like mine in Mount Vernon, New York, USA.
+
+The main way Twilio works, if you’re not familiar with it, is by providing webhooks. These webhooks get called for voice or messaging events, and you can build applications around them. That’s how Twilio gives you access to a phone number.
+
+Now we’re going to configure this phone number to hook it up to ElevenLabs.
+
+First, go to the Twilio Account Dashboard. Scroll down—you have to know to scroll down because it’s easy to miss. There you’ll see your Account SID, Auth Token (masked), and your Twilio phone number.
+
+If you’re following along, you’ll have all of that information as well. Now it’s time to go back to ElevenLabs.
+
+In ElevenLabs, go to Deploy → Phone Numbers. You’ll see no phone numbers yet. Click “Import a number,” then choose “Import from Twilio.” Give it a label—something like “Add Phone Number.”
+
+Next, it asks for the phone number. Copy it from Twilio and paste it in. Then copy your Twilio Account SID and paste that in. Once you do that, the Auth Token box appears. Copy the Auth Token from Twilio and paste it in.
+
+Now all the details are set. Click Import.
+
+It will connect, and there it is—the number is now imported. You can assign it to an agent to handle calls. We assign it to the Electronics E-commerce Sales Expert agent, and that’s it.
+
+Now we’re ready to call it.
+
+I call the number on my phone.
+
+“Hello. How can I help you today?”
+
+“Hello. Do you sell keyboards?”
+
+“Let me quickly check our inventory for keyboards. Yes, we offer a wide variety of keyboards to suit different needs. We have mechanical and gaming keyboards like the Prototype RGB Gaming Keyboard and the Prototype Wireless Mechanical Keyboard. We also have office and ergonomic keyboards, such as the TypeMaster Office Keyboard and the TypeMaster Ergonomic Split Keyboard. Additionally, we offer specialized and compact keyboards like the TypeMaster Compact 60% and the NovaKey Retro Type. Are you looking for a keyboard for gaming, office work, or a specific setup?”
+
+“Well, how much is the Prototype RGB?”
+
+“I’ll get that price for you right away. The Prototype RGB Gaming Keyboard is priced at $129.99.”
+
+“Thank you very much.”
+
+Success. That is a declarative declaration of victory, for sure. Congratulations to us.
+
+That was really cool, and I hope you agree that I delivered satisfaction. I said today wouldn’t be too challenging, but it would be very satisfying—and I think it was.
+
+Don’t worry if you didn’t get to the Twilio part. It’s very optional. You can see how easy it is if you don’t mind spending a bit on Twilio and clicking through some weird dashboard screens.
+
+But it’s amazing to see all of this come together. We had ElevenLabs, Twilio, n8n, Supabase, OpenAI embeddings, and Gemini—all talking to each other. And we put it together in a matter of minutes.
+
+The hero of this story is n8n. And another hero is ElevenLabs, not far behind. It was really easy to do, and it felt incredibly interactive—like having a real phone call with someone.
+
+Now the task for you is to let your imagination run wild.
+
+I’ve given you a setup that shows how you could accelerate a client’s business. You can use this in so many ways. You already know how to hook up an agent to email, Google Sheets, Slack, Telegram, and more.
+
+Get creative. Build a voice agent that adds value.
+
+A simple thing you could do is create something with subject matter knowledge about yourself. You could vectorize your emails and ask questions about them. Or you could build a RAG knowledge base for your company and make a voice agent that’s an expert in your day job.
+
+Or build something for a client as a freebie. Say, “Call this phone number. Ask it questions about your business.”
+
+This is your assignment.
+
+Be creative. It’s wide-ranging. You can replicate what I did, or you can take it in a different direction. Make a voice agent. Show me what you can do. I can’t wait to see it.
+
+With that, we conclude week two of the three-week program. Week two is done—and it’s done with a mic-drop moment.
+
+One last thing: my editor would kill me if I didn’t mention that if you’re able to rate this course on Udemy, it massively helps. Ratings determine whether Udemy shows the course to other people.
+
+If you’re satisfied with the voice agent and building something creative, I’d love to hear about it. Post about it on LinkedIn. Let me amplify your success.
+
+And speaking of amplification—if this week was about accelerating your business, next week is about taking it to the next level. Advanced integrations. Self-hosted n8n. A whole new level of pro.
+
+But before that, take a moment to enjoy what you’ve accomplished. You’re 67% of the way through the program. You’re well on your way to being an LLM pro.
+
+You’re building voice agents. You understand RAG back to front. It’s going great.
