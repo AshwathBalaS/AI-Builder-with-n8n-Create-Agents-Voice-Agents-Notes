@@ -113,6 +113,20 @@ This Repository contains my "AI Builder with n8n: Create Agents &amp; Voice Agen
 
 **Y) Day 5 - How to Connect ElevenLabs AI Voice Agent to Twilio Phone Number**
 
+**III) Section 3: Week 3: Amplify With Multi-Agent Systems And MCP**
+
+**A) Day 1 - n8n Cloud vs Self-Hosted: Which Deployment Option is Best for You?**
+
+**B) Day 1 - How to Install n8n Locally with Docker Desktop Step-by-Step Guide**
+
+**C) Day 1 - Docker Installation Tutorial: Set Up n8n on Your Computer Locally**
+
+**D) Day 1 - How to Run n8n with Docker: Setup Self-Hosted n8n Instance**
+
+**E) Day 1 - How to Setup Self-Hosted n8n AI Agent with DeepSeek and OpenRouter**
+
+**F) Day 1 - How to Integrate Ollama with Self-Hosted n8n for Local AI Workflows**
+
 
 
 # **I) Week 1 - Automate with Workflows in n8n Cloud**
@@ -4545,3 +4559,358 @@ And speaking of amplification—if this week was about accelerating your busines
 But before that, take a moment to enjoy what you’ve accomplished. You’re 67% of the way through the program. You’re well on your way to being an LLM pro.
 
 You’re building voice agents. You understand RAG back to front. It’s going great.
+
+# **III) Section 3: Week 3: Amplify With Multi-Agent Systems And MCP**
+
+# **A) Day 1 - n8n Cloud vs Self-Hosted: Which Deployment Option is Best for You?**
+
+Wait — is it possible?
+Yes. Yes, it’s possible.
+
+You’ve made it to week three, day one. You’ve reached the biggest week of the course. You’ve reached the finale week, and this is going to be huge. This is the week where you earn the right to put on your black belt with N810. You’re going to become a pro. We’re going to be doing some serious work. We’re going to be amplifying your business. Everything is about to happen.
+
+So what is week three all about?
+Week three is about getting advanced.
+
+This week, we’re going to do some self-hosting work today. We’ll explore advanced integrations. We’ll look at MCP, which is such a hot topic right now, and then move into context engineering and sub-agents. This week is about becoming more sophisticated in how we build workflows, and it all leads into a capstone project. That project will explore ways you can go beyond simply automating a business or accelerating a business, and instead truly amplify a business — doing things that simply weren’t possible before.
+
+The goal is to help you genuinely differentiate your business, or your client’s business, through the use of N810.
+
+There’s no time to dawdle, so let’s dig straight in. We’re not doing any recaps this time. We’re going straight into action.
+
+The first topic is cloud versus self-hosted.
+
+So far, we’ve done everything on the cloud at N.io, and it’s been incredibly quick to get started. It’s been simple, and it’s handled all the maintenance for us — upgrading versions, keeping everything up to date, and making sure things keep running. All of that is handled on their cloud, on their hardware.
+
+One thing we did a lot of last week was working with webhooks, where third-party services call into our infrastructure. When you’re running on the cloud, this is very easy because N gives you URLs automatically. You might remember the test and production URLs — you simply give those to a third party, and they can call directly into N. N handles the forwarding internally, which avoids a lot of complexity that webhooks can otherwise introduce.
+
+OAuth integrations — the harder kinds of integrations — were also relatively easy. Things like Google Sheets and Gmail just required a few clicks to authenticate, and then everything worked. Earlier, I mentioned that OAuth is actually very hard, and you might have thought, “Well, that didn’t seem hard at all.” The reason it felt easy is because we were running on N’s cloud, and it was doing a lot of the heavy lifting for us behind the scenes.
+
+Of course, there are downsides to the cloud approach. First, there’s the subscription pricing. We’ve been using the free plan — or at least I’ve been on the free trial, which lasts around 14 days. Once that runs out, you need to pay. There are various plans, with the lowest one being around $20 or £20 per month, and that plan comes with some constraints. Higher tiers offer more capabilities, but naturally cost more.
+
+There’s also less control. You’re not running everything yourself, so there are limitations on what you can and can’t do. Privacy is another consideration. If someone wants to keep all data on their own machines and maintain full control over it, that’s not what’s happening here — your software is running on N’s infrastructure.
+
+The positives of running locally, or self-hosting, are essentially the flip side of those downsides. It’s free under the fair code license, which we discussed right at the beginning of the course. That license allows you to run the software for free and sell your services to others. What you can’t do is directly compete by selling the product itself — which is entirely fair.
+
+With self-hosting, you have total control and flexibility. You install the open-source or fair-code software yourself and run it. It’s yours. Privacy is a major advantage too. You control the code and the data, and while you may still call out to third-party services, you could also run those locally if you choose.
+
+However, self-hosting is harder. The setup is more time-consuming, maintenance is more complex, and webhooks become tricky. When you’re running locally on your own computer, you typically don’t have a public web address. If you’re sitting behind a normal internet service provider, Slack can’t just send a webhook to localhost — that would only exist on Slack’s own machine. There has to be a publicly accessible URL that connects into your laptop, and that’s not trivial.
+
+OAuth is also more complex in this scenario. If you’re familiar with OAuth, you know that setting it up fully — registering apps, configuring redirects, managing secrets — involves several steps. It’s doable, but it’s definitely more of a professional-level setup.
+
+When I say “self-hosted,” I actually mean two possible things. One option is running everything locally on your own computer — literally installing it and running it on your machine. The other option is deploying it to a cloud machine that you control, such as an AWS instance, Google Cloud VM, or Azure box. In both cases, it’s still considered self-hosted because you manage and control the environment.
+
+For this course, we’re going to install and run it locally on our own computers. I’m not going to cover deploying it to the cloud, because that’s not really about N or AI — it’s about DevOps and platform engineering. I do cover that material in my MLOps course, and if you already know how to deploy things to services like App Runner or Cloud Run, you can absolutely do that on your own or delegate it to a DevOps engineer.
+
+So when I say “N self-hosted” in this course, I mean running it locally on your own machine.
+
+Now, despite saying we wouldn’t do any recaps, there is a quick reminder here about authentication patterns that we covered back in week one. The simplest pattern is using an API key, where your platform connects directly to another platform — like OpenAI — using a single key. The key is validated, and you’re good to go.
+
+Then there’s OAuth 2.0, which we’ve already worked with in its simplified form through cloud integrations like Google Sheets, Gmail, and Slack. It didn’t feel difficult because the cloud platform handled much of the OAuth complexity for us. However, if you’re working locally — or even in some cloud cases — you need to do the full OAuth flow yourself. That involves several steps and some setup, but it’s completely manageable, and we’ll be doing it.
+
+This local, self-hosted approach is optional. At this point, there’s a fork in the road.
+
+If you’re reasonably technical, you should absolutely try the local setup we’re about to do together. You can then continue running locally for the rest of the week. You’ll need tools like Ngrok for webhooks, and you’ll need to handle OAuth the advanced way. Once you’ve done it a few times, it becomes familiar, but there is some upfront effort.
+
+This path makes sense if you value flexibility, privacy, and full control, and if you’re comfortable with the technical aspects. If you’re very technical, you could even run models locally instead of using OpenRouter, connecting N directly to something like LLaMA. If your machine is powerful enough, you could run large models and complete agentic workflows entirely locally. If you’ve taken my technical or MLOps courses, you may already be comfortable deploying this to the cloud as well.
+
+Originally, my plan was to have everyone follow this self-hosted path with no fork in the road. But as I went through it myself, I realized there’s a lot of technical setup that could become a distraction for many of you. If you’re already productive on the cloud and don’t mind paying $20 or £20 per month — and yes, I’m in London — then it may make sense to stay there.
+
+If your focus is primarily commercial — on delivering value, automating workflows, and amplifying businesses — then my recommendation is this: try the local install once so you understand it, but don’t feel obligated to use it long-term. You can simply watch me go through it, learn from it, and then continue using the cloud for everything else.
+
+Today, we’ll do the technical part — installing and running locally — which you can either follow along with or just observe. For the rest of the week, I’ll be working on the cloud so we don’t get lost in unnecessary technical detail. The focus will be on maximizing the commercial impact — the real business value — of what you can do with N810.
+
+If you’re technically inclined, I strongly encourage you to replicate everything locally as well.
+
+# **B) Day 1 - How to Install n8n Locally with Docker Desktop Step-by-Step Guide**
+
+Okay. So now I’m going to take you through the process of installing and running N810 locally. As I mentioned earlier, I very much encourage everyone to go through this with me, but it is completely optional for those who want to stay on the cloud. There’s no requirement to do this unless you want to. That said, I do recommend at least following along and watching, so you get a sense of how it works.
+
+A good place to start is the official documentation, specifically the page on self-hosting N810. It’s always worth checking this page in case anything has changed over time, and this should really be considered your golden source of truth. The documentation explains how to set up N810 Community Edition, which is what we’ll be using—unless, of course, you happen to be an enterprise customer paying for a higher-tier version.
+
+There are two different ways to run N810 locally. One option is using NPM, which means running it through Node.js, the JavaScript runtime that runs on your computer. The other option is using Docker. Even if you don’t fully know what Docker is yet, you’ve almost certainly heard of it.
+
+Docker allows you to run what is essentially a computer inside your computer. These are called containers—Docker containers. Each container is like a small, isolated environment, somewhat similar to a virtual machine, with its own world that’s separated from the rest of your system. This makes Docker a fantastic way to install consistent software across many environments.
+
+One of the biggest advantages of Docker is that once you’ve built a container and it’s running on your local machine, it’s extremely easy to take that exact same container and deploy it to the cloud—whether that’s Amazon, Google Cloud, or elsewhere. This makes Docker very convenient for deployment. While N810 mentions that using NPM is slightly easier, Docker is the recommended approach. It’s more robust, more portable, and easier to deploy later, so that’s the approach we’ll be following today.
+
+I’m going to start this walkthrough on a PC, and then we’ll switch over to Mac. The first step is simple: if you don’t already have Docker installed, you need to install Docker. The documentation links directly to the Docker installation guide, and this is where everything begins.
+
+Installing Docker is very straightforward on Mac and Linux. If you’re a Linux user, this is probably very familiar territory. For Windows users, there are a few more steps involved, but it’s still very doable—and it’s a great thing to learn.
+
+Docker Desktop is available for Mac, Windows, and Linux. Before proceeding any further, you need to install Docker Desktop. Clicking the link will take you to the Docker website, where you can download Docker Desktop, which is the application that runs on your machine and lets you manage Docker containers.
+
+From here, we go to Docker Desktop for Windows. Now, this is where my situation diverges slightly, because I’m running a Windows emulator on an Apple Silicon Mac. That means I need a specific build. In your case, if you’re on a normal Windows PC, you’ll almost certainly be directed to the Microsoft Store to download the installer.
+
+I’m going to download the installer directly and then install Docker Desktop. Once the download completes, I open the file from my browser. Windows asks for permission to make changes, and I confirm that.
+
+There’s one very important thing you need to get right during the installation. You definitely want to use WSL 2 instead of Hyper-V. This option should be selected by default, and you should leave it that way. You also want to keep the default settings, including adding a shortcut and not enabling Windows containers.
+
+WSL 2, or Windows Subsystem for Linux version 2, is a Microsoft-built feature that installs a lightweight Linux environment inside Windows. It’s the best way to run Docker on Windows, and Docker Desktop will automatically set it up for you during installation.
+
+For you, this should all work smoothly. Docker Desktop should install, WSL 2 should be set up automatically, and everything should just work. In my case, because I’m on a Mac emulating Windows, things are a bit more complicated.
+
+Once the installer completes, I try launching Docker Desktop from the icon on my desktop. I accept the agreement, skip signing in—since you don’t need an account unless you want one—and skip the “how did you hear about us” prompt.
+
+At this point, I hit an issue, which is expected given my setup. You shouldn’t see this error if you’re on a proper Windows PC. If you do encounter issues, the documentation provides steps you can follow, which may include opening the Windows Start menu, typing “PowerShell,” and running commands there.
+
+This is something Windows users will get used to doing today—running commands in PowerShell. Mac users will be doing something very similar in the Terminal. If you’ve never seen this kind of interface before, it might feel like going back to the 1980s, but don’t worry—it’s completely normal and absolutely fine.
+
+You may need to run commands like checking the WSL version or installing WSL manually using commands such as wsl --install or updating it with wsl --update. In my case, these commands work fine, which confirms that the issue is related to my emulated environment rather than a normal Windows setup.
+
+For you, Docker Desktop should launch successfully. You should have Docker Desktop running, and you should also have PowerShell available and ready to use. If you run into trouble, message me and I’ll help you sort it out—but ideally, everything should be working smoothly at this point.
+
+Now, Mac users—stay with me. We’ll go through this quickly for macOS as well.
+
+On a Mac, the steps are very similar. You go to the same documentation page for self-hosting N810, follow the Docker installation guide, and choose Docker Desktop for Mac. From there, you select the correct version: Apple Silicon if you have an M1, M2, M3, or newer chip, or Intel if you’re using an older Mac.
+
+You download the installer, install Docker Desktop, and you don’t need to worry about any additional configuration. It should install cleanly. When Docker Desktop launches for the first time, you can skip signing in if you want—it’s optional.
+
+Once Docker Desktop is installed, you’ll occasionally need to open a terminal. One of the easiest ways to do that on a Mac is to press Command + Space to bring up Spotlight search, type “Terminal” (spelled like airport terminal), and press Enter. That opens a terminal window.
+
+Now, whether you’re on PC or Mac, you should start Docker Desktop. You should see its icon, be able to open it from your applications, and launch it successfully. When Docker Desktop is running, you’ll see a clean dashboard interface.
+
+At this point, everyone—PC and Mac alike—should be looking at Docker Desktop, ready to move on to the next step.
+
+# **C) Day 1 - Docker Installation Tutorial: Set Up n8n on Your Computer Locally**
+
+Got it 👍
+Here is the complete section rewritten cleanly into multiple clear paragraphs, end to end, without missing anything, and keeping the instructional tone and explanations intact.
+
+Whether you’re on a Mac or on a PC, this is what Docker Desktop should look like when it opens. You’ll see a window like this that shows general information about Docker and your system. On the left-hand side, there’s a navigation panel that’s important to understand at a high level.
+
+The Containers section shows all of the containers running on your machine. Each container is like a little box running inside your computer, with its own dedicated and isolated environment. The Images section shows images, which are essentially blueprints for creating containers. An image describes what a container should look like. If you’re a regular Docker user, you might have loads of these images already. I normally do too, but I deleted them all so that we’d start from a clean slate.
+
+Docker images are typically stored in remote repositories called hubs, and you can pull them down onto your machine so you can run them locally. The Volumes section represents disk storage—think of these as little internal disk drives that are ring-fenced for Docker containers. I have some old, irrelevant volumes here that you can ignore. We’re about to create a brand-new volume specifically for N810, which is the next thing we’re going to do.
+
+For this setup, we’re really only going to care about Containers and Volumes. The rest of the Docker Desktop interface can be safely ignored for now.
+
+The next step is to create a volume. This volume will act like a persistent disk that N810 can use when it runs on your computer. If we go back to the N810 documentation, you’ll see a section that tells you how to get started, and it includes a small block of code. The first line of that code is the command to create a Docker volume.
+
+This command works exactly the same way on both Mac and PC. You should copy it to your clipboard because we’re going to run it in the terminal.
+
+If you’re on a PC, you should open PowerShell, which I showed earlier. If you’re on a Mac, remember to press Command + Space, type “Terminal,” and press Enter. For people who are new to this, it can feel strange the first time, but don’t worry—it’s completely normal.
+
+Once your terminal or PowerShell window is open, paste the command in and press Enter. This tells Docker to create the volume. If the command runs successfully, you won’t see much output—it just quietly does its job.
+
+If the command doesn’t work and Docker isn’t recognized, the first thing to try is restarting your computer and launching Docker Desktop again. Sometimes system path variables haven’t been fully set yet. If you’re on a PC and you see an error about permissions or scripts not being allowed to run, that’s a very common Windows issue. You can simply Google the error message, and you’ll find the standard fix, which usually involves running a single additional command to grant permission.
+
+At this point, we should now have a volume created. Let’s confirm that. Go back to Docker Desktop, click on Volumes, and you should see a new volume called something like n8n_data. It will show zero bytes used because it’s empty and ready. We still won’t have any containers running yet, and that’s expected.
+
+The next step is the big one: actually running N810. This is surprisingly simple. We’re going to run one command that does everything needed to start N810.
+
+Back in the N810 documentation, you’ll see the command used to launch the service. At first glance, it looks intimidating because it’s long and has a lot of parts, but don’t worry—we’ll break it down.
+
+If you’re on a PC, it’s best to edit this command slightly. Specifically, remove the line-continuation backslashes and put everything on a single line. Some Windows setups don’t handle those backslashes well. I’ll also include this cleaned-up version in the course resources so you can copy and paste it directly if you want.
+
+Another important thing you must change in this command is the time zone. The documentation highlights where to do this. There’s a link that lists all valid time zones. When you click it, you’ll see a long list. You should select the time zone that matches where you are.
+
+For example, I’m currently in London, so my time zone is Europe/London. You might be somewhere else, and that’s fine—just make sure you choose the correct one and replace the placeholder text in the command with your actual time zone.
+
+Once that’s done, copy the full command. We’ve already run the volume creation step, so now we’re just going to run the main command. Paste it into your terminal (on Mac) or PowerShell (on PC).
+
+When pasting it in, I replace both time zone placeholders with Europe/London. If you’re on a PC, again, make sure everything is on one line with no backslashes. This format works perfectly fine on a Mac as well.
+
+Now that the command is ready, let’s talk about what it’s actually doing.
+
+The command starts with docker run, which tells Docker that we want to run something. Everything that follows consists of flags—options that describe how Docker should run this container.
+
+The --name flag tells Docker what to call the container. In this case, we’re naming it n810. What we’re doing here is starting one of those “boxes inside a box”—a container—and giving it a name so we can manage it easily.
+
+The -p flag is about networking. It maps port 5678 inside the container to port 5678 on your host computer. This means that when you open your browser and go to port 5678 on your machine, the request is forwarded into the container. This is a very common and important Docker pattern.
+
+The -e flags are used to set environment variables. These configure things like the time zone and other recommended settings that N810 needs, such as file permissions and enabling task runners.
+
+The -v flag is about volumes. This is where we tell Docker to attach the volume we created earlier. We’re saying that whenever the container writes data to /home/node, it should actually be stored in the n8n_data volume. This gives us persistent storage, so data isn’t lost if the container stops or restarts.
+
+Finally, at the very end of the command is the Docker image name. This is the blueprint for the container. Docker will look up this image from the Docker registry, download it if it’s not already on your machine, and then use it to build and run the container.
+
+That’s the key part of the whole command. This is where we’re telling Docker: find this image, use it as the blueprint, and build a running N810 container on my machine.
+
+# **D) Day 1 - How to Run n8n with Docker: Setup Self-Hosted n8n Instance**
+
+All right, so after all of that big explanation—probably more than you wanted to know—I’m going to press Enter and actually run the command.
+
+The first thing that happens is Docker tells us that it is unable to find the image locally. That simply means this Docker image (the blueprint for the container) does not yet exist on my computer. Because of that, Docker automatically goes out to the remote registry—the place we specified in the command—and starts fetching the image from the internet. You can see it downloading layer by layer. I have a reasonably fast internet connection, so it downloads quickly for me, but for you it might take a bit longer depending on your connection.
+
+Once the download finishes, Docker immediately moves on to the next step: creating and starting a running container on my computer using that image. During this phase, you’ll see a lot of messages scrolling by. Some of them mention things like migrations in progress and other setup-related logs. You might see slightly different messages than I do because you’re creating the container at a different time or with a different setup, and that’s completely normal.
+
+After all of that, a message appears saying:
+“Failed to start Python task runner in internal mode because Python 3 is missing from this system.”
+At first glance, this looks alarming. You might read it and think, That’s not true—I definitely have Python 3 installed on my computer, or maybe you don’t, but either way it feels confusing.
+
+This is where the message is misleading. When it says “this system”, it is not referring to your computer. It is referring to the Docker container, the “computer inside your computer.” What’s happening is that the container tries to run something before Python 3 is installed inside that container environment. Since this container was intentionally built by the N8N (or N810) team, and since everyone who runs it sees the same message, this behavior is expected and intentional.
+
+The message even says that the Python runner in internal mode is intended only for debugging, which tells us that this is not something we need to care about for normal usage. In short, this error does not indicate a real problem, and we can safely ignore it.
+
+Immediately after that, the logs confirm that the application did successfully start. It tells us that the editor is accessible via localhost:5678 and says “Press O to open in the browser.” However, if you actually press O, nothing happens. This can feel confusing, but again, there’s a good reason.
+
+Pressing O would attempt to open a browser inside the Docker container, not on your actual computer. The container exists in its own isolated environment, so that browser isn’t useful to us. What we actually want is to open a browser on our host machine—your real computer.
+
+The good news is that earlier we mapped port 5678 from the container to port 5678 on the host machine. Because of that port mapping, when we open a browser on our computer and go to localhost:5678, our browser will connect to the server running inside the container. You don’t need to fully understand the networking details—just know that this setup is intentional and it works.
+
+Before opening the browser, let’s briefly look at Docker Desktop again. If you go to the Containers tab, you’ll see that a new container now exists. Earlier, this page was empty. Now there is a container named N810, along with an automatically generated container ID. Docker Desktop also shows which image was used to create this container—the same image URL we specified in the command.
+
+You’ll also notice that Docker Desktop clearly shows the port mapping: port 5678 inside the container is mapped to port 5678 on the host machine. This confirms exactly what we discussed earlier. If you switch over to the Images tab, you’ll see the downloaded image listed there as well. At this point, everything is set up and running correctly.
+
+Now all that remains is to open a browser and navigate to:
+http://localhost:5678
+
+When we do that, the application loads immediately. We’re greeted with the setup screen for creating an owner account. This is the login for your local instance running on your computer. The credentials you create here are stored in a database inside the Docker container and have nothing to do with any cloud account you may already have.
+
+You can enter your name, a valid email address, and create a password. It’s a good idea to use a real email address, because the application may send useful information or a license key. After entering your details and clicking Next, you’ll see some optional onboarding screens.
+
+You can skip most of these if you want by clicking Get Started. The platform itself is already free to use, but it may offer you the option to receive a free license key that unlocks a few extra features. If you choose that option, you’ll receive an email with instructions on how to apply the license.
+
+At this point, setup is complete. You are now looking at the main interface of N810 (or N8N) running locally. The menu and layout should look very familiar if you’ve used the cloud version before. The key difference is that this instance is running entirely on your own machine, inside a Docker container.
+
+To be completely precise, your browser is talking to localhost:5678, which routes traffic into the Docker container, where the application server is running. From your perspective, though, it feels just like any other local web application.
+
+And with that, you’re fully set up. The system is running, the container is active, the ports are mapped, and the application is ready to use—right on your own computer.
+
+# **E) Day 1 - How to Setup Self-Hosted n8n AI Agent with DeepSeek and OpenRouter**
+
+This screen should look very familiar, and it’s reassuring that it looks almost exactly like what we saw earlier. Let me quickly point out a few useful things before we move on.
+
+If you scroll down to Settings, you’ll find sections like Usage and Plan. This is where you can see what kind of features you’re currently using. When you receive the email containing your activation key, this is also where you paste it—by clicking Enter Activation Key—to unlock a few additional features. At the bottom of the settings page, you’ll see the version number of the platform you’re running. This is mostly for the more technical folks, but it’s useful to know.
+
+When you’re running this via Docker, you can optionally specify the container name followed by a colon and a version tag if you want to run a newer or upcoming release. At the moment, for example, the latest official version might be something like 2.1.3, while newer preview versions might be 2.2.x. There are also several other settings here that may become useful later, so it’s worth knowing where this section lives.
+
+Now let’s go back to the main screen. You’ll see the Overview tab, which shows all your workflows. You might also notice a new beta chat feature, which allows you to interact with AI conversationally to navigate and construct things, rather than embedding AI directly inside workflows. You’ll also see Templates, which are a great way to explore workflows other people have already built. In this course, though, we’re intentionally building everything from scratch so that you really understand the underlying plumbing.
+
+The Overview page is where we’ll create our first workflow. So let’s do that now.
+
+I click Start from Scratch, and here we are. Let’s clear away anything extra so we can see the canvas properly. This screen should look very familiar—it’s exactly the same workflow canvas we’ve seen before.
+
+We can zoom in and out using the plus and minus buttons, and yes, that works as expected. Pressing Tab brings up the node search, and pressing Escape takes us back. We can open the chat panel, then press Escape again to return. We can resize panels, clean things up, and generally move around exactly as we’re used to.
+
+Now we start with a familiar trigger: When a chat message is received. Pressing Tab again, we bring up the AI-related nodes, choose AI Agent, and press Escape. Once again, we’re looking at the same screen we already know well.
+
+Now it’s time to configure our first chat model while running everything self-hosted. I’m going to recommend using OpenRouter, which we set up right at the beginning of the course. This lets us call open-source models running in the cloud, which feels especially appropriate since we’re hosting everything else ourselves.
+
+You could also choose to run a LLaMA model locally on your own machine if you wanted to. If you’re familiar with Docker and comfortable with more advanced setups, you have two main options. You could run LLaMA directly on your host machine and map the port so the Docker container can access it, or you could use one of the official Docker Compose setups, which runs LLaMA in a separate container and connects the two containers together.
+
+That second approach works very well, but it has a downside on Macs: you wouldn’t be able to take advantage of the Mac’s GPU. To do that, you’d need to run LLaMA directly on the host. On a PC, however, GPU support is more straightforward. All of that is more advanced, though, so for now we’ll stick with OpenRouter and cloud-hosted open-source models.
+
+We now create a new credential for OpenRouter. The interface asks for an API key, so I copy my key from OpenRouter and paste it here. I double-check that it looks right—these keys usually start with something like sk-or-v1. Once I click Test, I get the message that the connection was tested successfully.
+
+Now we return to the workflow. We can dismiss the password manager prompt if it pops up. Our chat model is configured, but we still need to choose which model to use.
+
+By default, it might show something like GPT-4 or a mini model, but we don’t want that. Instead, we choose DeepSeek v3.2, which at the time of recording is the latest and greatest model from the Chinese startup DeepSeek AI.
+
+With that selected, we’re ready to chat. I click Open Chat and type “Hi there.” Immediately, we get a response: “Hello, how can I help you today?”
+
+What’s great here is that everything is running locally inside the Docker container, yet we’re seamlessly calling external APIs through OpenRouter to reach DeepSeek. It took a bit of setup, but when you think about the scale of what’s happening—running the entire platform locally while connecting to powerful models in the cloud—it’s actually pretty amazing. And this works the same way on both Mac and PC.
+
+At this point, we have a working AI agent. But an agent isn’t really an agent unless it has tools. Remember the definition: an agent is an LLM in a loop equipped with tools to achieve a goal.
+
+So we add our old friend Marketstack. We create a new credential, paste in the API key, and save it. This one doesn’t show a green “tested” message, but that’s normal. As long as the key is correct, it will work.
+
+Next comes the slightly fiddly part. We configure the tool so the model can choose the stock ticker dynamically. We also add a filter and make sure the Latest option is turned on. This step is easy to forget, and if you forget it, the tool won’t work properly. Once that’s done, everything is ready.
+
+Now we test it. I’ll mention here that DeepSeek through OpenRouter isn’t always perfectly reliable at tool calling. Sometimes the tool doesn’t fire on the first attempt. This could be a DeepSeek issue, an OpenRouter issue, or the interaction between the two. So if something odd happens, don’t panic.
+
+I start by saying “Hi there.” The model responds and explains that it can help with financial data. This tells us it has read the tool description from the system prompt. I then ask, “Please tell me the price of Apple.”
+
+The first time, the tool doesn’t fire correctly. So I ask again, slightly rephrased: “Please tell me the stock price of Apple.” This time, we see the tool being called. After a short pause, the model returns the latest available data and gives us the answer.
+
+Sometimes you may need to ask twice, or you might build in logic—like an IF node—to retry automatically if a tool call fails. This is something you can experiment with. You’ll also find that different models behave differently, and some are much more reliable with tools than others.
+
+To demonstrate a more bulletproof option, we switch the model to OpenAI OSS-120B, OpenAI’s top open-source model, still accessed through OpenRouter. This is not connecting to OpenAI’s hosted API—it’s using their published weights running on OpenRouter’s infrastructure.
+
+We save the change, clear the chat, and try again. I say “Hi there,” get a response, and then ask for the price of Apple stock. This time, the tool is called immediately and the response comes back cleanly with the latest closing price. This model is extremely reliable for tool calling.
+
+At this point, everything is working smoothly. You can repeat these experiments, try other tools, or swap models to see how behavior changes. With the exception of things like webhooks and OAuth, most functionality behaves almost identically to the cloud version.
+
+So give it a try. Experiment, explore, and confirm for yourself that you now have a fully working self-hosted AI agent platform, running locally on your computer, using real tools and real models—and working beautifully.
+
+# **F) Day 1 - How to Integrate Ollama with Self-Hosted n8n for Local AI Workflows**
+
+Absolutely 👍
+Here is the full content rewritten end-to-end in clean, readable paragraphs, broken up properly, without missing anything and without adding or summarizing—just structured and polished for clarity.
+
+To show you something that is harder to do, let’s open this up and look for Sheets. If we open the Google Sheets tool and go to “Select Credentials” and then add a new credential, you may remember that when we were on n8n Cloud, it was relatively easy to connect to a Google Sheet. We simply pressed a button, a popup launched, we logged into Google, and we were done.
+
+That works because n8n Cloud has already had a handshake with Google in the past. Google knows who n8n Cloud is. There has been some OAuth 2 integration that has happened at that platform level, and as a result, it’s relatively quick to add yourself in.
+
+However, when we’re running on our local machine, Google Cloud has no idea who this is. Because of that, there are more hoops to jump through in order to set the credentials in place. It’s a bit of a rigmarole, but it is perfectly doable. We will do some of this tomorrow, but when you’re running locally, you have to do this sort of thing quite often.
+
+Okay, let’s close that, come back out, and delete this new box.
+
+The final thing I want to show you—and I’m going to do this very quickly because it’s super optional, as I think I mentioned—is about running models locally. I do want to give you a demo of this. For people who already know about it, you can follow along, and for those who are new, this should help you build some intuition.
+
+I want to add in Ollama. So what is Ollama? Ollama is a product that lets you run models locally on your computer in a fast way. You can install it by pressing the download button on their site. When you do that, it brings up a little chat box, and you can use that to chat with different models locally. All of this runs directly on your computer.
+
+If you’re listening to this part and you’re already familiar with running models locally, you may already have Ollama installed. If not, give it a shot—download it, run it, and get a sense for how it works. We’re about to hook n8n up to this local setup.
+
+Once you’ve installed Ollama by pressing the download button and following the quick instructions, it should come up looking something like a chat interface. It might have a white background or a black background. This interface is Ollama.
+
+Over on the side, there’s a dropdown where you can pick one of the open-source models to talk to. You can also find out more details about the models by going to the Models page on the Ollama website. The models with a cloud icon next to them, or ones that say “:cloud” in the name, are not the ones you want to pick. Those are remote models. We want the models that run locally on your computer.
+
+This button here is how you download a model, so make sure you download a few. If you have a smaller computer, pick smaller models. Again, the Models page on their website gives good guidance on which models to choose.
+
+Once you’ve picked a model—for example, I could pick GPT-OSS here—you can send it a message like “Hi there!” The model will then start thinking. GPT-OSS is a large model, so it likely needs at least 16 GB of RAM on your GPU, maybe more. If it runs on your CPU instead, it will just be slower, but eventually it will reply.
+
+You might notice that your screen freezes for a moment while this happens. That’s because your computer is working very hard. Mine just froze briefly as well. Eventually, the model replies with something like, “Hello, how can I help you today?” You might notice some jitter because your machine is being heavily used.
+
+Alternatively, you can pick a much smaller model. I have a really tiny one here—Gemma from Google. If I say “Hi, I’m great. How are you?” using Gemma 3, it will give a quick response. The answer may be a bit random, but it should be somewhat coherent. You shouldn’t expect too much from a tiny model, but it’s fine. For example, it might respond with, “I’m doing well, thanks for asking.”
+
+So go ahead and download a few models and play around with them.
+
+Next, we’re going to connect these models to n8n.
+
+The first thing I’m going to do is go back to the terminal where n8n is running inside our container. I’m going to stop it, clear my screen, and then run the same command as before to start it up again—but with one small difference.
+
+If I show you this command, you’ll see an extra line added. What this line does, for people who are new to Docker, is that it creates a new web address inside the container called host.docker.internal. This gives the container access to the host computer.
+
+That means anything running inside the container can connect to services running on the host, which is where Ollama is running. When I run this command again, it launches the container much faster because the image is already downloaded. And just like that, it’s running.
+
+Now we can go back to localhost:5678, and this new web address will be recognized inside the container.
+
+I’m now back looking at my workflow. I’m going to refresh the screen because we stopped and restarted n8n. Once that reloads, we’re back in.
+
+First, I’m going to delete this OpenRouter chat model. Let’s just remove that. Then I’ll add a new chat model. The chat model I’m going to pick is the Ollama Chat Model.
+
+Now we need to select a credential to connect with, and this part looks a bit strange. We don’t really have a credential in the traditional sense, because we’re just connecting to the local computer. It’s not really a credential—it’s just a URL.
+
+People who use Ollama will recognize this. Ollama runs and listens on localhost:11434. If you’ve launched Ollama and are chatting with it, it’s already listening on that port and ready for connections.
+
+However, because we’re inside a Docker container, we can’t just use localhost. Instead, we paste in a different URL: host.docker.internal:11434. This works because we explicitly mapped the container to the host earlier.
+
+Again, if this is too much technical detail, don’t worry about it. Just get the gist. I mainly want to show you that this works.
+
+When I press Save, we should see a green message saying that the connection was tested successfully. This means n8n is now hooked up to an Ollama instance running on my local machine.
+
+Now I can exit out of here. With this set up, when I go back to the model selection, I’ll see all the models I’ve downloaded locally in Ollama. From within the UI, I can also download more models.
+
+I could choose GPT-OSS DB, but I want to mix things up, so I’m going to pick Mistral 3. This is a popular open-source model from the French AI startup Mistral. Let’s use that model running locally on my computer.
+
+I’ll exit out of here, and now we’re ready to chat. We’re going to be chatting with n8n running locally, connected to a model running locally in Ollama.
+
+Let’s try it.
+
+I open the chat and say, “Hi there.” It’s not going to be fast, because the model is chugging away on my computer. I can see my GPU usage ramping up. After a moment, it replies: “Hello, how can I assist you today?”
+
+It worked. This is a big moment.
+
+Now let’s ask, “What is the share price of Apple?” Off it goes. I can see the tool getting called, and again my GPU usage spikes. Shortly after, it responds: “Current closing share price is $270.”
+
+That’s a success.
+
+Don’t worry if you didn’t do this part. That’s completely fine. This section is optional. But if you’re into open-source models running on your own computer, you should absolutely try this. Run Ollama, connect it, and see it working.
+
+This is definitely a more technical point, but I think it’s really cool to see everything running locally—n8n running locally, and the model running locally as well.
+
+With that, we can save this and go back to the overview. You’ll notice a very familiar screen. You have workflows, credentials showing all the credentials we’ve set up so far, and executions, where you can see all the different workflow runs in this account.
+
+That wraps up the tour of n8n running self-hosted.
+
+I hope the technical people feel satisfied with the level of detail we went into. The commercial people should now have a perspective on what this setup looks like. For the rest of the course, we’ll focus more on the commercial side.
+
+Technical folks are welcome to keep going with the self-hosted version and continue experimenting with open-source models running locally on their machines.
+
+That’s a wrap for today—week three, self-hosted and local. We ran everything locally, and it looked almost exactly the same as the cloud version. We even briefly connected to Ollama at the end, which you can do as well if you wish.
+
+From tomorrow, we go back to the cloud version to polish off the week with advanced integrations using MCP, and then move into everything leading up to the capstone project, all about amplifying your business.
+
+With that, you’re 73% of the way through to becoming a pro.
