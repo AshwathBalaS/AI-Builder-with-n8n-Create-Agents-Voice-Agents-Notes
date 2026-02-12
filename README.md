@@ -127,6 +127,18 @@ This Repository contains my "AI Builder with n8n: Create Agents &amp; Voice Agen
 
 **F) Day 1 - How to Integrate Ollama with Self-Hosted n8n for Local AI Workflows**
 
+**G) Day 2 - Advanced n8n Integrations: API Webhooks and OAuth Setup Tutorial**
+
+**H) If you want to learn: - How do I set up Google OAuth2 credentials for n8n workf**
+
+**I) Day 2 - How to Set Up Google Drive Trigger in n8n with OAuth2 Authentication**
+
+**J) Day 2 - How to Extract Text from PDF Files Using n8n Workflow Automation**
+
+**K) Day 2 - Firecrawl API Integration: Web Scraping Workflow with n8n**
+
+**L) Day 2 - n8n Structured Output Parser and HTTP Request Workflow Automation**
+
 
 
 # **I) Week 1 - Automate with Workflows in n8n Cloud**
@@ -4914,3 +4926,744 @@ That’s a wrap for today—week three, self-hosted and local. We ran everything
 From tomorrow, we go back to the cloud version to polish off the week with advanced integrations using MCP, and then move into everything leading up to the capstone project, all about amplifying your business.
 
 With that, you’re 73% of the way through to becoming a pro.
+
+# **G) Day 2 - Advanced n8n Integrations: API Webhooks and OAuth Setup Tutorial**
+
+So today is a yellow day, and if you've been following my color scheme system, you’ll know that a yellow day means integration day.
+
+And if you dread all things integration, you needn’t—because today is going to be a great integration day.
+
+There’s one tricky integration and several easy-peasy, fun integrations. Welcome to week three, day two. Welcome to our next integration today.
+
+I’ve called this one Timeline Advanced Integrations, because this is the Pro week and we’re getting advanced.
+
+Of course, there’s a fork in the road. As I said last time, most of you—like me—will probably go back to the cloud, because we’re focused primarily on building commercial functionality this week.
+
+Some of you may wish to stay running locally, and I very much encourage that. But you’ll need to fend for yourself in a couple of places—like using ngrok for webhooks and things like that. But you’ve got this.
+
+Otherwise, come with me back to n8n Cloud.
+
+Before we do that, though, let’s do a couple of refreshers and recaps. You know I like to do them, because sometimes the best way to reinforce learning is to be a little bit repetitive.
+
+Let’s quickly review.
+
+There are three styles of authentication and credentials.
+
+First, the simple ones: just an API key. You’re connecting to OpenAI, you have a key, you paste it in, you’re careful while pasting, you get the green indicator—and you’re set. These are the easy ones.
+
+Then there’s OAuth 2, which we’ve already experienced in what I call the one-click version. This is when we’re working in the cloud and the OAuth client is already configured.
+
+For example, n8n is already kind of connected to Google. So we go through the OAuth 2 flow, and it’s actually pretty straightforward to integrate with Google Sheets and Gmail. That part was easy.
+
+However, there are other Google APIs—and many non-Google APIs—where you have to jump through more hoops. This is the harder OAuth 2 strategy, where you have to actually set up an OAuth 2 client yourself.
+
+That’s what we’re going to do today in our first integration. It’s the only hard integration today.
+
+As I’ve said, there are some shenanigans you should get ready for. If you’re using n8n locally, you’ll need to do this for many OAuth 2 integrations, so you’ll get used to it over time.
+
+There’s one step where you must be very careful—specifically with a URL that you need to copy and paste. You must get it exactly right, otherwise you’ll run into trouble.
+
+We’ll do that step together, and I’ll tell you exactly which part needs your full attention.
+
+Once you’ve done this a couple of times, it becomes second nature. It’s a great skill to have, and we’re doing it today.
+
+The other refresher is this old chestnut—probably the last time we’ll review it.
+
+Calling an API, in web terms, means making a web request using HTTP. When you call a URL, that URL is known as an endpoint.
+
+So the language you might use is:
+
+“I’m making an API call”
+
+“I’m calling an API by making an HTTP request to an endpoint”
+
+That endpoint is calling an API.
+
+Now think about the reverse of that. If you’re on the receiving end—if you’re providing the API—someone else is calling you to notify you of a real-time event.
+
+That endpoint is called a webhook.
+
+So from their point of view, they’re calling your API. From your point of view, an event is coming in.
+
+The language would be:
+
+“I’ve set up a webhook. Please make an HTTP request to this endpoint to notify me when something happens.”
+
+Or: “Can you tell me your webhook so I can notify you?”
+
+That’s webhooks—essentially the same concept as APIs, just viewed from the opposite side.
+
+Technically, HTTP requests come in different methods. The most common are GET and POST.
+
+GET is usually used to retrieve information, which comes back as a JSON document.
+
+POST is normally used to send information, where the data is sent in the body of the request.
+
+In traditional internet terms, submitting a form is basically a POST request, and the form data becomes the JSON body.
+
+You don’t need to know all of that deeply—but that’s what POST is.
+
+We used this ourselves when 11 Labs called into n8n in week two.
+
+Now let’s relate this to n8n nodes.
+
+Trigger nodes in n8n are very often webhooks. For example, the Slack trigger gives you different URLs for test and production—those URLs are webhooks.
+
+Similarly, when we used 11 Labs, we set up a webhook using the generic webhook node. That webhook collected a URL, and when it was called, it triggered a workflow.
+
+So triggers in n8n are often webhooks.
+
+Action nodes, on the other hand, are usually making HTTP requests to endpoints.
+
+For example, the Pushover node—whether you used it as a tool or as a regular workflow action—was making an HTTP request to Pushover’s API endpoint.
+
+That’s all it’s doing: making a request.
+
+There’s also a generic HTTP Request node that lets you make any HTTP request you want. You can either use pre-built nodes like Pushover, or use the generic one and build your own.
+
+The same applies to triggers:
+
+Use a pre-built trigger like Slack
+
+Or build your own webhook, like we did with 11 Labs
+
+All of this should be connecting together for you now. If not, you’ll see more of it very shortly.
+
+That’s enough talk.
+
+Let’s get back to action.
+Let’s get back to n8n Cloud.
+
+Have you missed it? I have. Let’s go there now.
+
+Here we are back in n8n by pressing the Sign In button.
+
+Remember this screen? The dashboard.
+
+Now opening up my instance… here it comes.
+
+What we’re going to do now is press Create Workflow. Ignore that—I’m still on my trial.
+
+Press Create Workflow.
+
+Here we are. We know this screen so well.
+
+Add a first step: let’s use Chat Message.
+
+Press the plus button → AI → AI Agent. It’s second nature now—you’ve built muscle memory.
+
+Let’s add a Chat Model.
+
+We’ll use OpenRouter. It already has a credential: the OpenRouter account.
+
+Let’s go with DeepSeek.
+DeepSeek AI → DeepSeek 3.2.
+
+Click and escape.
+
+We’ll give it some standard memory—simple memory. All sounds good.
+
+Now open a chat and say “Hi there”, just to make sure everything still works in n8n Cloud.
+
+And there it goes:
+“Hello, how can I help you today?”
+
+So far, so good.
+
+Since we’re in Pro week, let me show you a couple of extra features—some bells and whistles—to help you get comfortable.
+
+Over here is the Projects list. You can create a project by pressing the plus button and selecting Project.
+
+On the free trial, I’m only allowed one project, and I already created mine. I’ll sign up for the full plan later.
+
+You can create workflows inside projects. Think of a project as a way to organize multiple workflows.
+
+Later this week, you’ll see how multiple workflows can collaborate to achieve a larger business outcome.
+
+Right now, most of mine are under Personal.
+
+Let’s take the workflow we just created and give it a name: DeepSeek.
+
+Go back to Personal—you’ll see it there.
+
+Click the three dots → Move.
+
+Move it to my project (the only one I have). Share the credential. No folder yet—project root. Move it.
+
+Now it’s gone from Personal.
+
+If I open my project, I see it there.
+
+Now I’ll create a folder inside the project.
+
+Click → Create folder → call it My First Folder → Create.
+
+Now I drag and drop the DeepSeek workflow into that folder.
+
+We now have:
+
+Project: My Project
+
+Folder: My First Folder
+
+Workflow: DeepSeek
+
+This is just like a normal file system hierarchy.
+
+One more bell and whistle: Stickies.
+
+Click Chat to collapse it.
+Press Shift + S to add a sticky note.
+
+Double-click to edit. I’ll add markdown text:
+
+Inputs
+This is data flowing in.
+
+Add another sticky. Make it bigger.
+
+Processing
+This is the business.
+
+Move them around.
+
+Stickies are purely cosmetic, but they help organize your nodes visually and conceptually.
+
+You can combine:
+
+Projects
+
+Folders
+
+Stickies
+
+All to stay organized.
+
+And since later this week we’ll be building increasingly sophisticated projects, it’s important to know the tools available to keep everything clean and manageable.
+
+# **H) If you want to learn: - How do I set up Google OAuth2 credentials for n8n workf**
+
+Okay, it’s now time for the big integration of the day, which is a full OAuth 2 integration with Google. This will allow us to do things like scan Google Drive, taking us beyond the Google Sheets integration we did earlier.
+
+It all begins on the website cloud.google.com, which is the landing page for Google Cloud Platform (GCP).
+
+So head to cloud.google.com. If you don’t already have a Google account, you’ll be prompted to start free. But I assume you do have one. You can click Sign In, and a regular free Google account—like Gmail—is perfectly fine. I personally also have a paid Google Workspace account, but either works.
+
+Once you sign in, you’ll need to enter your password. I’ll see you once you’re logged in.
+
+If this is your first time using GCP with your Google ID, you’ll probably be asked a few setup questions. You may see information about free credits and other onboarding details. You can safely accept all of this.
+
+We’re not going to do anything paid at this point, so everything will be fine.
+
+Eventually, you’ll reach the main page and press the Console button. This takes you to console.cloud.google.com, which is where our real adventure begins.
+
+The first thing we’re going to do is create a Google project.
+
+I already have some projects, so I see the project selector at the top. You may see a New Project or Create Project button instead. Either way, the process is the same.
+
+Click to create a new project.
+
+Now we need to name the project. The name will be Amplify, because this week is all about amplifying your business.
+
+The project ID cannot be changed later. You can edit it, but it must be globally unique. As expected, “amplify” is already taken.
+
+That’s okay—the project ID doesn’t really matter. You can let Google choose one, or you can create something like amplify-yourname or add a number.
+
+I’ll choose something available and move forward.
+
+What matters is that the project name is Amplify.
+
+Now press Create.
+
+The project is now being created. It usually takes a minute.
+
+Once it’s done, press Select Project, or click the project selector and choose Amplify.
+
+Now Amplify is the active project.
+
+Next, go to the navigation menu at the top left. GCP is enormous, but we’ll only touch a tiny part of it.
+
+Go to APIs & Services → Library.
+
+In the library, search for Google Drive API.
+
+There it is. Click on it and press Enable.
+
+Give it a moment.
+
+And there we go—the Google Drive API is enabled.
+
+Now things get real.
+
+Next, go to OAuth consent screen.
+
+This is where the real action happens.
+
+It’s not as grueling as it could be, because we’re setting this up for internal use only. That means only people inside this Google organization—basically you—can use it.
+
+Because of that, the setup is much easier.
+
+Click Get Started.
+
+Now fill in the details.
+
+The app name asking for consent will be Amplify.
+
+For user support email, select your email address.
+
+Press Next.
+
+Here’s a fork in the road.
+
+If you are a Gmail user, you need to choose External here, because Gmail accounts are external to Google Workspace.
+
+If you have a Google Workspace account like I do, you can choose Internal, which restricts access to people in your organization.
+
+Internal is easier because you don’t need to submit your app for verification.
+
+If you’re external, you can remain in testing mode, which is also very easy.
+
+Either way, this process is straightforward.
+
+Make your choice and press Next.
+
+Now add a contact email address so Google can notify you. This can simply be the same email address again.
+
+Finish the setup, agree to the terms (yes, of course), and complete the process.
+
+Your OAuth consent screen is now created, and everything is in good shape.
+
+Onwards.
+
+Next comes the big step.
+
+Go back to APIs & Services, and now select Credentials.
+
+Previously we were in OAuth consent screen—now we’re in credentials.
+
+This is where it really happens.
+
+Click Create Credentials.
+
+Choose OAuth Client ID.
+
+This client ID is what allows an application to request permission to access your Google account.
+
+Now this is the part where you must be very careful.
+
+First, set the Application Type to Web Application.
+
+Next, give it a name. This is just for your own reference in the console—it won’t be visible to end users.
+
+Call it something like n8n for Amplify.
+
+Now we reach the tricky part: Authorized Redirect URI.
+
+This is where things often go wrong.
+
+The redirect URI is the URL Google redirects to after a successful authentication.
+
+So what do we put here?
+
+This is the moment where we pause this screen and go back to n8n.
+
+Switch over to n8n and go to your workflow environment.
+
+Navigate to your project, then open the Credentials tab.
+
+Click Create Credential.
+
+We’re looking for Google Drive OAuth2 API.
+
+Select it and press Continue.
+
+Now look closely at this screen.
+
+You’ll see an OAuth Redirect URL.
+
+Click to copy it.
+
+Now go back to Google Cloud Console.
+
+Paste that exact URL into the Authorized Redirect URI field.
+
+This has to be perfect.
+
+If you get this wrong, it won’t work—and it can be extremely difficult to figure out why.
+
+This is one of the fiddly parts of OAuth 2. You must:
+
+Choose the correct API
+
+Copy the correct callback URL
+
+Paste it exactly
+
+No shortcuts here.
+
+Hopefully you’re not feeling fried yet. There are only one or two tricky steps, and I did warn you this integration was a little hairy.
+
+Now press Create.
+
+Google may say it could take a few minutes—but usually it’s instant.
+
+And there it is.
+
+Your OAuth Client ID and Client Secret have been created.
+
+These are extremely important.
+
+I shouldn’t really be showing them to you, but don’t worry—I’ll delete this later.
+
+Now do not close this screen yet.
+
+You must carefully transfer these two values into n8n.
+
+First, copy the Client ID.
+
+Go back to n8n, paste it into the Client ID field.
+
+Check that it’s there.
+
+Now go back to Google, copy the Client Secret.
+
+Return to n8n, paste it into the Client Secret field.
+
+Be careful. Double-check.
+
+Okay.
+
+You’ve done it.
+
+And now—we’re almost ready to try this integration.
+
+# **I) Day 2 - How to Set Up Google Drive Trigger in n8n with OAuth2 Authentication**
+
+Okay, so we go back here again.
+
+Now we need to make sure we press OK and confirm that everything is good. We check that it has all been created successfully and that it’s there.
+
+Once that’s confirmed, we go back over here. Now it’s time to press Sign in with Google account.
+
+This is where the magic happens.
+
+Okay, let’s do this.
+
+We click Sign in with Google, and up pops a screen like this.
+
+I’m going to use the same account—it has to be the same account.
+
+You’ll see a message saying that Amplify wants to access your Google account, allowing it to see, edit, create, and delete all your Google Drive files, and so on.
+
+Make sure you trust Amplify.
+
+This is the OAuth 2 process.
+
+When I press Allow, Google is going to redirect back to the redirect URL we configured earlier in the Google Cloud screens. That redirect URL points back to n8n, which is already waiting and expecting this callback.
+
+And then it happens.
+
+Connection successful.
+
+And can you see what I can see? Yes, you can.
+
+You can see the green message: Account connected.
+
+We have just successfully completed a full OAuth 2 credentials flow.
+
+Congratulations 🎉
+
+It would be a fair question to ask: why is this so hard? Why is it so involved? Why can’t we just use an API key?
+
+We’re used to API keys, and they’re so simple.
+
+To understand this, it’s important to understand the context of why OAuth 2 is such an involved process.
+
+It’s because we’ve enabled great powers.
+
+The idea of OAuth 2 is that it allows someone like us—imagine we’re building a software product called Amplify—to distribute that software to many users.
+
+For Amplify to work, it needs access not to my Google Drive, but to the user’s Google Drive.
+
+That means the user authenticates, and they explicitly allow their Google Drive to be operated on by my software, Amplify.
+
+That’s a huge amount of power.
+
+Because of that, it’s critically important that:
+
+The end user understands what’s happening
+
+Google knows who Amplify is
+
+Google knows that it’s okay for Amplify to access the user’s Google Drive
+
+That’s why there are hoops to jump through. This is a serious security allowance.
+
+We are being granted rights to something very powerful.
+
+That’s why we have to identify Amplify to Google, ensure Google understands who we are, and then go through these steps.
+
+The reason this felt simpler when we integrated Google Sheets earlier is because n8n had already done a lot of this work.
+
+In that case, n8n had already identified itself to Google and effectively acted as the “Amplify” application.
+
+You don’t strictly need to know all of this, but if you ever wondered why OAuth 2 feels so complex, this is why.
+
+It enables a flexible, secure way to allow an application to authenticate and operate on another user’s Google Drive.
+
+In our case, it’s much simpler because we are the user, and it’s our own Google Drive—which is why the process felt relatively smooth.
+
+That’s the deeper insight into what OAuth 2 is really all about.
+
+Okay, now that we’ve done this—what can we actually use it for?
+
+Let’s do something with it.
+
+First, I’ve gone into Google Drive and created a folder called Amplify File Drop.
+
+This was done at drive.google.com, in case you’re not familiar with Google Drive.
+
+The folder now exists.
+
+Next, I go back into n8n.
+
+Let’s escape out of here and go back to my project, into My First Folder.
+
+I probably should give it a better name later.
+
+Now let’s create a new workflow.
+
+Inside the folder, we add a first step.
+
+We select Google Drive.
+
+From the options, we choose On changes involving a specific folder.
+
+Here we go.
+
+The credential fills in automatically with the Google Drive account we just configured.
+
+The mode is how often it should check for changes—we’ll leave it at every minute, which is the default.
+
+We’re triggering on changes involving a specific folder, which is exactly what we want.
+
+Now we select the folder.
+
+We choose Amplify File Drop, the folder we just created.
+
+Next, we choose what to watch for.
+
+We select When file is created.
+
+That looks good.
+
+We can test an event, and it says no data could be found, which is exactly what we expect at this point.
+
+There’s also an option to filter by file type, but we’ll leave that empty for now.
+
+Now we escape out.
+
+We have our Google Drive trigger.
+
+Next, we’re going to connect this to a Pushover notification.
+
+We add Pushover → Push a message.
+
+We need to create a new credential and paste in our Pushover credentials.
+
+Remember, the application token is the one that starts with the letter A.
+
+I paste that in carefully.
+
+Then I paste in my user key, which starts with a U.
+
+The message will be a fixed message:
+“File has arrived!”
+
+We’ll set a high priority so it makes a sound.
+
+Great.
+
+I carefully enter the credentials:
+
+The token that starts with A goes into the credential
+
+The user key that starts with U goes into the user field
+
+I save it.
+
+All set.
+
+Now let’s test it.
+
+We go back to Amplify File Drop in Google Drive.
+
+We create a new Google Doc—a new blank document.
+
+We type “wow” and name it wow.
+
+The file is created automatically.
+
+Now we go back to n8n.
+
+We execute the workflow.
+
+And—bam—the workflow executes.
+
+I just received a Pushover notification.
+
+My volume is turned off, but trust me—it arrived.
+
+Just in case you don’t believe me, here it is.
+
+The notification says: “File has arrived.”
+
+Perfect.
+
+So it works.
+
+We’re able to monitor files arriving in Google Drive and send push notifications.
+
+But this was a manual execution.
+
+If we want this to happen live, we need to publish the workflow.
+
+I save the workflow.
+
+I press Publish.
+
+Off it goes.
+
+Done.
+
+Now we go back to the Amplify File Drop folder.
+
+Let’s duplicate the file.
+
+Make a copy.
+
+There it is.
+
+Now the one-minute countdown begins.
+
+We wait.
+
+We can go back to the workflow and look at Executions.
+
+It’s running.
+
+No notification yet.
+
+This is the exciting part.
+
+And there it is.
+
+It happened.
+
+We got the notification.
+
+The execution shows as Succeeded.
+
+There was a little dead air while we waited, but it was worth it.
+
+It caught me off guard too.
+
+Very nice.
+
+This also gave us a chance to see executions appearing live, which made the wait worthwhile.
+
+We have a success.
+
+We now have a deployed Google Drive trigger that listens for new files arriving and sends a push notification when they do.
+
+# **J) Day 2 - How to Extract Text from PDF Files Using n8n Workflow Automation**
+
+We’re now going to take this one step further. Let’s go back to my project, into my first folder, and create a new workflow. I click Create New Workflow.
+
+The first step is going to be exactly the same as before: a Google Drive trigger. We want this workflow to be triggered when a file arrives or changes in a particular folder. We’re using the same credential as before, checking every minute for changes in a specific folder. We select the Amplify folder again, and once more we choose the option When a file is created in the watched folder.
+
+Now we’ve selected Amplify File Drop as the folder being monitored, so the trigger is officially set up.
+
+Next, we add another Google Drive node. This time, the node operation is an Action, and the action will be Download a file. Once the node is added, we need to configure it.
+
+The file we want to download is the same file we’re being notified about by the trigger. To do this, we select the file field and switch it to an expression. We want to identify the file by its ID, so this expression needs to return the file ID that was collected by the trigger.
+
+At this point, we don’t yet know the exact format of the incoming data, but we can get a clue by looking at what we saw earlier. If we save this workflow temporarily, exit out, and go back to our previous workflow in the first folder, we can open the push notification trigger and inspect the data shown on the left-hand side.
+
+Looking at that data, we can see that there is a field named ID. That gives us a strong indication that this is the value we need. We check briefly to see if there’s anything else that looks like a file ID, but there isn’t. So it’s reasonable to assume that ID is exactly what we’re after.
+
+With that confirmed, we return to our new workflow in the first folder and open it up. In the Download File node, we select an expression and enter:
+
+{{$json.id}}
+
+
+This expression pulls the incoming file ID and tells the node which file to download. For now, we won’t add any additional nodes. We save the workflow and return to the main view.
+
+Next, we duplicate the workflow to make a copy. After that, we come back to the workflow and execute it to see what happens.
+
+The workflow runs successfully. When we open the execution details, we can see that the file has been downloaded and that binary data is present. Everything looks good so far.
+
+Now we press the plus button again and add a new node called Extract from File, which converts binary data into JSON. This node appears to do exactly what we need at this stage.
+
+The node supports multiple file types. For now, we choose to extract text from a PDF file, which is exactly what we want. We select Extract from PDF, and for the source data, we specify binary data, which is where the downloaded file is stored.
+
+We review the options, and everything looks fine, so we leave the defaults as they are.
+
+Next, we need to test this end to end. To do that, we create a PDF file. I open Microsoft Word, although any application that lets you type text will work.
+
+I type:
+“This is a very important message.”
+
+There are many ways to convert this into a PDF—exporting, printing to PDF, or saving as PDF. I simply choose Save As, select PDF as the file format, and name the file message.pdf. The file is now saved on my computer.
+
+Now we go back to Amplify File Drop. I have my Finder window open, and I drag and drop message.pdf into the folder. The file uploads successfully.
+
+Back in the workflow, I execute it and wait for the result.
+
+The workflow runs completely. When we open the execution output, we can see that the text was successfully extracted from the PDF. The content reads:
+
+“This is a very important message”
+
+This text was pulled directly from the PDF and parsed by n8n. It’s incredibly simple and very satisfying to see it work.
+
+Now we continue by adding another node. You probably already know what node this will be—it’s a Pushover node. We configure it to push a message.
+
+The node remembers my Pushover account, but I still need to paste in my user key. For the message content, we again use an expression. Looking at the data on the left-hand side, we can simply drag and drop the text field into the message field. This ensures that the extracted text from the PDF becomes the push notification message.
+
+I paste in my user key, save the node (by pressing Escape), and also save the entire workflow.
+
+Now we test it again. I return to Amplify File Drop, drag and drop the same PDF file once more, and choose Keep both files, so a new version is created.
+
+Back in the workflow, I execute it again.
+
+This time, the push notification comes through immediately. The message reads:
+
+“This is a very important message.”
+
+I love it—it works perfectly. For a moment, I was a little confused because I received more than one notification. In addition to this message, I also received a notification saying “File has arrived”. That’s because the original production workflow is still running, and it also detected the file drop.
+
+So to recap what just happened:
+
+We have a Google Drive trigger that checks every minute for new files in a specific folder. When a new file appears in Google Drive, authenticated via OAuth credentials, the trigger activates the next node.
+
+The next node uses the file ID from the trigger to download the file. That downloaded file is then passed to the Extract from PDF node, which converts the binary data into JSON and extracts the text.
+
+That extracted text—“This is a very important message”—is then passed to the Pushover node, which sends it as a push notification.
+
+We can repeat this process as many times as we want. Each time we drag and drop a file into the folder, the workflow runs, extracts the text, and sends a notification. Because both workflows are active, we see two notifications: one with the extracted message and one confirming that a file has arrived.
+
+It’s a simple workflow, but it’s extremely satisfying and fun to see it working end to end.
+
+As a creative next step, we’ve used PDF extraction here, but the Extract from File node supports other file types as well. Since you must choose the extraction type in advance, a great enhancement would be to add an IF node.
+
+You could inspect the file’s MIME type and route it to different extraction nodes based on the file type. For example, if the MIME type is application/pdf, route it to the PDF extraction node; otherwise, route it to a different extractor.
+
+That way, you could drag and drop different kinds of files into the Amplify File Drop folder, and the workflow would automatically detect, parse, and notify you with the contents.
+
+Have fun experimenting with this—these are some really powerful and exciting integrations you’ve just put in place.
+
+# **K) Day 2 - Firecrawl API Integration: Web Scraping Workflow with n8n**
+
+
+
+# **L) Day 2 - n8n Structured Output Parser and HTTP Request Workflow Automation**
