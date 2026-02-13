@@ -5664,6 +5664,153 @@ Have fun experimenting with this—these are some really powerful and exciting i
 
 # **K) Day 2 - Firecrawl API Integration: Web Scraping Workflow with n8n**
 
+Okay, next up we have a super important integration, and this is a really nice, easy one that you’re going to enjoy. It’s powerful, it’s practical, and it fits perfectly into everything we’re doing with agents.
 
+The platform is called Firecrawl.
+
+Firecrawl supports a whole range of web-related activities: web scraping, web crawling, finding links on a web page, parsing pages, and running searches. Their headline says “Turn websites into LLM-ready data”, which is exactly what we want. And the good news is—it actually does that very well.
+
+Firecrawl has a free tier, which is great for us. I’m in the UK, so I see prices in pounds, but wherever you are, you’ll see the correct local currency. It’s very popular and extremely useful for agent-based workflows, so we’re going to sign up for a Firecrawl plan.
+
+We head over to the Firecrawl website and click Sign Up. I’ll continue with Google and authenticate using my Google account. Once that’s done, we’re logged in. You’ll see that email verification is complete and that Firecrawl has handled the OAuth flow for us. At this point, you should appreciate how much work Firecrawl had to do behind the scenes to make that “Continue with Google” button work smoothly.
+
+Next, we’re guided through a short setup flow. There’s some introductory material we can skip, and then we’re asked to review the Terms of Service. Firecrawl describes itself as an API that converts any website into LLM-friendly data and provides tools to extract structured data from web pages so it’s clean and ready for AI applications. You scroll all the way through, accept the terms, and continue.
+
+After that, you’ll see a brief screen suggesting you invite your team—we won’t do that. We choose Personal, select the free plan, which allows scraping up to 500 pages, and click get started. You’ll see a “Welcome to Firecrawl” message, and now you’re on the dashboard.
+
+On the dashboard, you can see all the things Firecrawl can do: scraping, searching, crawling, agent functionality, and even MCP integration—which we’ll look at tomorrow. For now, the most important thing on this screen is the API key. Copy that API key to your clipboard. That’s what we’re going to need next.
+
+Now we switch back to n8n.
+
+We go back into our workspace and open the project—specifically the DeepSeek project we’ve been working on. The first step here is a little unintuitive, so pay attention. Create a new node and search for Firecrawl. You’ll see a Firecrawl node with an Install Node button. Click that. This installs Firecrawl as a usable node inside n8n. Once that’s done, the package is installed and ready to use.
+
+Now we’re ready for the final and very big concept for today: structured outputs.
+
+We want to use Firecrawl to run a web search. However, Firecrawl is not available as an LLM tool that the agent can directly call. That means we can’t just plug it into the agent itself. Instead, Firecrawl needs to come after the agent in the workflow. The agent produces output, and that output becomes the input for Firecrawl.
+
+Here’s the problem: LLMs naturally produce unstructured text. That’s not good enough for driving downstream automation. We need reliable JSON that conforms to a known schema.
+
+This is where structured outputs come in—and this is absolutely crucial. This is something practitioners use all the time.
+
+We double-click on the AI agent node and turn on Require specific output format. The moment we do that, a new connector appears, allowing us to attach an output parser. We select Structured Output Parser.
+
+This parser tells the LLM: you can generate whatever you want, but it must conform to this JSON structure. And n8n makes this incredibly easy—you just give it an example JSON object.
+
+Instead of the default example, we define our own. Something very simple, like:
+
+a single key called search_query
+
+a value like "internet search"
+
+This example defines the schema. From now on, the LLM will always output JSON that matches this structure. That guarantee is incredibly powerful.
+
+Next, we update the system prompt to keep everything coherent. We change it from “You are a helpful assistant” to something more specific, like:
+
+“You come up with a search query for an internet search to best answer the user’s question.”
+
+Now the agent’s role is crystal clear: take the user’s question and convert it into a clean search query, formatted exactly as JSON.
+
+Before connecting Firecrawl, we test this. We open the chat and ask:
+
+“What are the best LLMs to be using in 2026?”
+
+The agent runs. When we inspect the output in JSON view, we see that it perfectly conforms to our structured output format. Every time. No surprises.
+
+This is the key insight: LLMs are amazing at nuanced reasoning, but terrible at guaranteed structure unless you force it. Structured outputs are the solution. Always use them when building workflows. Turn on “require specific format,” define a JSON schema, and align your system prompt with that schema.
+
+Now we’re ready to connect Firecrawl.
+
+We add a Firecrawl node and select Search (optionally scrape web results). For credentials, we paste in the Firecrawl API key we copied earlier and test the connection—everything should pass.
+
+Firecrawl needs a query input, and we already have exactly what we need: output.search_query from the AI agent. We map that field directly into the Firecrawl query input. n8n automatically switches this to expression mode, and the expression is {{$json.output.search_query}}.
+
+Now we test the full flow.
+
+We start a fresh chat and ask the same question again. The agent runs via OpenRouter and DeepSeek, produces a structured search query, and Firecrawl executes the web search.
+
+When we inspect Firecrawl’s output, we see exactly what we hoped for: a list of URLs, titles, and descriptions from real web sources—Forbes, Zapier, and other high-quality links related to LLMs in 2026.
+
+What we’ve just done is powerful.
+
+We took a natural language question, used an AI agent to turn it into a structured search query, and then used Firecrawl to scrape and retrieve real web data based on that query. This is a fantastic example of how agents, structured outputs, and external tools come together into a clean, reliable, production-ready workflow.
+
+This is a great integration—and it’s only the beginning.
 
 # **L) Day 2 - n8n Structured Output Parser and HTTP Request Workflow Automation**
+
+Absolutely 👍
+Here is the complete end-to-end explanation, rewritten cleanly in multiple paragraphs, keeping every concept and step intact, without missing anything, and structured so it’s easy to follow.
+
+Okay, so this is the final integration for today. We’ve already done a huge amount, but the most important concept we’ve reinforced is just how crucial structured outputs are. I’m genuinely happy you’ve seen them working so smoothly and elegantly. This is one of those ideas that completely changes how reliably you can build AI-powered workflows.
+
+Now, we’re going to move to a different place altogether. I want to show you a very useful website called Webhook.site. When you open it, this is exactly what you see. As the page itself explains, it generates free, unique URLs and email addresses, and it lets you instantly see everything that gets sent to them.
+
+This is incredibly useful for testing. It’s essentially a live webpage that exposes a unique webhook URL. You can copy this URL straight to your clipboard and immediately start sending data to it. There’s no login, no credentials, and no configuration required.
+
+So why am I showing you this?
+
+The reason is that now we want to come back into n8n and introduce another kind of node. Up until now, we’ve seen webhook triggers—where something else calls us. This time, we want our workflow to call an external endpoint.
+
+We don’t want a pre-built integration for this. Instead, we want a generic node that can make HTTP calls to any endpoint we choose. You may remember me mentioning this node earlier. It’s called the HTTP Request node.
+
+The HTTP Request node is a general-purpose node that allows you to make GET, POST, and other HTTP requests to any URL. This is exactly what we need.
+
+We configure it as follows.
+First, we set the method to POST.
+Next, we paste in the unique webhook URL we copied from Webhook.site.
+Then we specify that we want to send a body, and that body will be JSON.
+Instead of using individual fields, we choose to send raw JSON.
+Finally, we enable expressions and insert the JSON output from the previous node.
+
+That JSON is the structured data produced earlier in the workflow. Because we used structured outputs, we know it is valid, predictable, and machine-readable.
+
+Before running the workflow, it’s useful to understand what Webhook.site looks like in action. If you simply open the webhook URL in a browser, it triggers a GET request, and you immediately see it appear on the page. That confirms the endpoint is working. You can then clear that test entry and move on.
+
+Now it’s time to run everything properly.
+
+We go back into the chat, paste in the same question we used before—for example, asking about the best LLMs to use in 2026—and let the workflow execute.
+
+Behind the scenes, several things happen in sequence.
+The AI agent runs.
+The model generates output that strictly conforms to our structured JSON format.
+That output is used to drive a web search via Firecrawl.
+The results from Firecrawl are collected as JSON.
+Finally, the HTTP Request node sends that JSON via a POST request to the Webhook.site endpoint.
+
+As the workflow runs, we switch back to Webhook.site—and there it is. A POST request appears in real time, containing all the data sent from n8n. This data came directly from the AI agent, through structured outputs, through Firecrawl, and out via the HTTP Request node.
+
+That moment confirms everything worked end to end.
+
+If we now look back at the workflow execution in n8n, we can see that every node completed successfully. This demonstrates the generic HTTP Request node in action and shows how easy it is to send data to any external service.
+
+Now let’s step back and do a quick recap of what we built.
+
+We start with a chat input that feeds into an AI agent.
+That AI agent uses OpenRouter to call DeepSeek.
+A system prompt tells the model that its job is to generate search queries.
+We enable Require Specific Output Format, and attach a structured output parser, guaranteeing JSON output.
+That JSON is passed into Firecrawl, which performs a real web search and gathers results.
+The JSON output from Firecrawl is then sent into a generic HTTP Request node.
+That node posts the data to a live endpoint provided by Webhook.site.
+Webhook.site instantly displays the incoming request and payload.
+
+Everything is deterministic, observable, and clean.
+
+Zooming out even further, today was a big day. We completed three major integrations.
+
+First, we integrated Google Drive, which was effectively two integrations in one. We used a Google Drive trigger to detect file changes, and then a Google Drive download step to read the contents of a file.
+
+Second, we integrated Firecrawl, which allowed us to perform real web searches and retrieve structured search results using an API key. This was a very important integration and one you’ll use a lot.
+
+Third, we used the generic HTTP Request node to send data out to the internet and post results to a live endpoint we could immediately inspect.
+
+Along the way, we also covered some core foundational learning. You now understand structured outputs and why they are absolutely essential when working with LLMs. You also learned how to extract and read text from files like PDFs—another extremely useful skill.
+
+Honestly, today should have been half integrations and half core concepts. Structured outputs are that important. Anyone who has worked seriously with LLMs will agree—they are not optional.
+
+With that, we officially wrap up Advanced Integrations Day.
+
+You are now about 80% of the way to being a pro. There’s just 20% left—and that final stretch is all about MCP, which everyone is talking about right now.
+
+The good news is that you won’t just hear about MCP—you’ll understand it.
+We’re covering it tomorrow.
